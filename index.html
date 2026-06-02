@@ -1172,11 +1172,6 @@ async function emailInvoiceToPrasanna(paperId) {
     // Replace the URL below with your deployed Apps Script Web App URL
     const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/xtransmatrix.com/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec';
 
-    if (const APPS_SCRIPT_URL === 'https://script.google.com/a/macros/xtransmatrix.com/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec') {
-      toast('⚠️ Set up Apps Script URL first — see SETUP GUIDE');
-      return;
-    }
-
     const { invno, client, period, amount, date } = currentInvoice;
     const amountFormatted = typeof amount === 'number'
       ? '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2 })
