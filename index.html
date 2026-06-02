@@ -1141,16 +1141,37 @@ async function emailInvoiceToPrasanna(paperId) {
 
   try {
     // Render the invoice element to canvas
-    const canvas = await html2canvas(paperEl, {
+    // Render invoice into a hidden full-width container for accurate capture
+    const A4_PX = 794;
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = `position:fixed;left:-9999px;top:0;width:${A4_PX}px;background:white;z-index:-1;`;
+    wrapper.innerHTML = paperEl.outerHTML;
+    document.body.appendChild(wrapper);
+    const captureEl = wrapper.firstElementChild;
+
+    // Apply all computed styles from the original
+    captureEl.style.width = A4_PX + 'px';
+    captureEl.style.minWidth = A4_PX + 'px';
+    captureEl.style.boxShadow = 'none';
+    captureEl.style.border = 'none';
+
+    // Wait for fonts/layout
+    await new Promise(r => setTimeout(r, 300));
+
+    const canvas = await html2canvas(wrapper, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
-      logging: false
+      logging: false,
+      width: A4_PX,
+      windowWidth: A4_PX
     });
 
-    // Convert canvas to PDF using jsPDF
+    document.body.removeChild(wrapper);
+
+    // Convert canvas to PDF using jsPDF — fill full A4 page
     const { jsPDF } = window.jspdf;
-    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
@@ -1170,7 +1191,7 @@ async function emailInvoiceToPrasanna(paperId) {
 
     // ── Send via Google Apps Script Web App ──
     // Replace the URL below with your deployed Apps Script Web App URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/xtransmatrix.com/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec';
 
     const { invno, client, period, amount, date } = currentInvoice;
     const amountFormatted = typeof amount === 'number'
