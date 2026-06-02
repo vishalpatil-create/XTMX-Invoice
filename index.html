@@ -1159,30 +1159,29 @@ async function emailInvoiceToPrasanna(paperId) {
     await new Promise(r => setTimeout(r, 300));
 
     const canvas = await html2canvas(wrapper, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
       width: A4_PX,
+      height: wrapper.scrollHeight,
       windowWidth: A4_PX
     });
 
     document.body.removeChild(wrapper);
 
-    // Convert canvas to PDF using jsPDF — scale to fill full A4 page
+    // Convert canvas to PDF — fit width exactly, paginate naturally
     const { jsPDF } = window.jspdf;
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
-    // Scale image so it fills the full page width AND at minimum full page height
+    // imgH in mm based on canvas aspect ratio at full page width
     const imgH = (canvas.height * pageW) / canvas.width;
-    const scaledH = Math.max(imgH, pageH);
-    const scaledW = (scaledH * pageW) / imgH;
     let yOffset = 0;
-    let remaining = scaledH;
+    let remaining = imgH;
     while (remaining > 0) {
-      pdf.addImage(imgData, 'JPEG', 0, -yOffset, scaledW, scaledH);
+      pdf.addImage(imgData, 'JPEG', 0, -yOffset, pageW, imgH);
       remaining -= pageH;
       if (remaining > 0) { pdf.addPage(); yOffset += pageH; }
     }
