@@ -1150,8 +1150,51 @@ async function emailInvoiceToPrasanna(paperId) {
       ? '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2 })
       : String(amount);
 
-    // Send invoice HTML directly — Apps Script renders PDF server-side
-    const payload = { invno, client, period, date, amount: amountFormatted, invoiceHTML: paperEl.outerHTML };
+    // Generate PDF in browser and send as base64
+    toast('⏳ Generating PDF...');
+
+    const { jsPDF } = window.jspdf;
+
+    // Clone invoice into hidden full-width div for rendering
+    const clone = document.createElement('div');
+    clone.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:-1;';
+    clone.innerHTML = paperEl.outerHTML;
+    clone.firstElementChild.style.width = '794px';
+    clone.firstElementChild.style.boxShadow = 'none';
+    clone.firstElementChild.style.border = 'none';
+    document.body.appendChild(clone);
+
+    await new Promise(r => setTimeout(r, 400));
+
+    const canvas = await html2canvas(clone, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      width: 794,
+      height: clone.scrollHeight,
+      windowWidth: 794
+    });
+
+    document.body.removeChild(clone);
+
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const imgH = (canvas.height * pageW) / canvas.width;
+    let yPos = 0, remaining = imgH;
+    while (remaining > 0) {
+      pdf.addImage(imgData, 'JPEG', 0, -yPos, pageW, imgH);
+      remaining -= pageH;
+      if (remaining > 0) { pdf.addPage(); yPos += pageH; }
+    }
+
+    const pdfBase64 = pdf.output('datauristring').split(',')[1];
+
+    toast('⏳ Sending email...');
+
+    const payload = { invno, client, period, date, amount: amountFormatted, pdfBase64 };
 
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
