@@ -1194,14 +1194,32 @@ async function emailInvoiceToPrasanna(paperId) {
 
     toast('⏳ Sending email...');
 
-    const payload = { invno, client, period, date, amount: amountFormatted, pdfBase64 };
+    // Split large PDF into chunks and send
+    const chunkSize = 500000; // 500KB chunks
+    const totalChunks = Math.ceil(pdfBase64.length / chunkSize);
+    
+    for (let i = 0; i < totalChunks; i++) {
+      const chunk = pdfBase64.slice(i * chunkSize, (i + 1) * chunkSize);
+      const isLast = i === totalChunks - 1;
+      
+      const payload = { 
+        invno, client, period, date, amount: amountFormatted,
+        pdfChunk: chunk,
+        chunkIndex: i,
+        totalChunks: totalChunks,
+        isLast: isLast,
+        fileName: 'Invoice_' + invno + '_' + client + '.pdf'
+      };
 
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    });
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+      
+      await new Promise(r => setTimeout(r, 200));
+    }
 
     toast('✅ Invoice emailed to Prasanna!');
   } catch(err) {
