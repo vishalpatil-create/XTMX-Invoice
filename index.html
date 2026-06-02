@@ -9,14 +9,14 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --ink: #0f0e0c;
+  --ink: #1a3fa3;
   --paper: #f7f4ef;
   --card: #ffffff;
   --rule: #e0dbd2;
   --muted: #8a8580;
-  --c-infinitus: #c8401a;
-  --c-synaptic: #1a6b3c;
-  --c-icon: #7b2d8b;
+  --c-infinitus: #1a3fa3;
+  --c-synaptic: #1a3fa3;
+  --c-icon: #1a3fa3;
   --accent: #1a4dc8;
   --highlight: #fff8e7;
   --sidebar-w: 220px;
@@ -27,37 +27,44 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
 
 /* ── SIDEBAR ── */
 .sidebar {
-  width: var(--sidebar-w); background: var(--ink); color: var(--paper);
+  width: var(--sidebar-w); background: #0d1b2e; color: white;
   display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh;
-  z-index: 100; overflow-y: auto;
+  z-index: 100; overflow-y: auto; box-shadow: 4px 0 20px rgba(0,0,0,0.2);
 }
 .sidebar-logo {
-  padding: 24px 20px 18px;
-  border-bottom: 1px solid #2a2824;
+  padding: 28px 22px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(160deg,#0d1b2e,#122444);
 }
-.sidebar-logo .brand { font-family: 'DM Serif Display', serif; font-size: 18px; line-height: 1.2; }
-.sidebar-logo .brand span { color: var(--c-infinitus); }
-.sidebar-logo .sub { font-family: 'DM Mono', monospace; font-size: 9px; color: #666; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px; }
+.sidebar-logo .brand { font-family: 'DM Serif Display', serif; font-size: 20px; line-height: 1.2; color: white; }
+.sidebar-logo .brand span { color: #5b9bd5; }
+.sidebar-logo .sub { font-family: 'DM Mono', monospace; font-size: 8.5px; color: rgba(255,255,255,0.38); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 6px; }
 
-.nav-section { padding: 16px 0 8px; }
-.nav-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #555; padding: 0 20px; margin-bottom: 6px; }
+.nav-section { padding: 20px 0 4px; }
+.nav-label {
+  font-family: 'DM Mono', monospace; font-size: 8.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.38);
+  padding: 0 22px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-label::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.07); }
 .nav-item {
-  display: flex; align-items: center; gap: 10px; padding: 9px 20px;
-  cursor: pointer; font-size: 13px; color: #bbb; transition: all 0.15s;
-  border-left: 3px solid transparent;
+  display: flex; align-items: center; gap: 11px; padding: 10px 22px;
+  cursor: pointer; font-size: 13px; color: rgba(255,255,255,0.75); transition: all 0.15s;
+  border-left: 3px solid transparent; font-weight: 400;
 }
-.nav-item:hover { color: white; background: #1a1814; }
-.nav-item.active { color: white; border-left-color: var(--c-infinitus); background: #1a1814; }
-.nav-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.nav-item .dot.inf { background: var(--c-infinitus); }
-.nav-item .dot.syn { background: var(--c-synaptic); }
-.nav-item .dot.ico { background: var(--c-icon); }
-.nav-item .dot.dash { background: var(--accent); }
+.nav-item:hover { color: white; background: rgba(255,255,255,0.07); border-left-color: rgba(91,155,213,0.5); }
+.nav-item.active { color: white; border-left-color: #5b9bd5; background: rgba(91,155,213,0.14); font-weight: 500; }
+.nav-item .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: white; opacity: 0.7; }
+.nav-item .dot.inf { background: white; }
+.nav-item .dot.syn { background: white; }
+.nav-item .dot.ico { background: white; }
+.nav-item .dot.dash { background: white; }
 
-.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid #2a2824; font-family: 'DM Mono', monospace; font-size: 10px; color: #444; }
+.sidebar-footer { margin-top: auto; padding: 18px 22px; border-top: 1px solid rgba(255,255,255,0.08); font-family: 'DM Mono', monospace; font-size: 9.5px; color: rgba(255,255,255,0.28); line-height: 1.7; background: rgba(0,0,0,0.15); }
 
 /* ── MAIN ── */
-.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; background: #f0f4f9; }
 
 /* ── TOP BAR ── */
 .topbar {
@@ -79,7 +86,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
   background: white; border-radius: 6px; padding: 20px 22px;
   border-top: 4px solid var(--rule); position: relative; overflow: hidden;
 }
-.kpi-card.inf { border-top-color: var(--c-infinitus); }
+.kpi-card.inf { border-top-color:#1a3fa3; }
 .kpi-card.syn { border-top-color: var(--c-synaptic); }
 .kpi-card.ico { border-top-color: var(--c-icon); }
 .kpi-card.total { border-top-color: var(--accent); background: var(--ink); color: white; }
@@ -122,7 +129,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
   padding: 20px 24px; background: white; border-radius: 6px;
   border-left: 6px solid var(--rule);
 }
-.client-header.inf { border-left-color: var(--c-infinitus); }
+.client-header.inf { border-left-color:#1a3fa3; }
 .client-header.syn { border-left-color: var(--c-synaptic); }
 .client-header.ico { border-left-color: var(--c-icon); }
 .client-header-name { font-family: 'DM Serif Display', serif; font-size: 22px; }
@@ -206,7 +213,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
 /* ── SUMMARY STATS ── */
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 18px 0; }
 .stat-pill { background: white; border-radius: 4px; padding: 14px 18px; border-left: 4px solid var(--rule); }
-.stat-pill.inf { border-left-color: var(--c-infinitus); }
+.stat-pill.inf { border-left-color:#1a3fa3; }
 .stat-pill.syn { border-left-color: var(--c-synaptic); }
 .stat-pill.ico { border-left-color: var(--c-icon); }
 .stat-pill .label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
@@ -220,7 +227,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
 .invoice-paper { background: white; border: 1px solid var(--rule); border-radius: 4px; box-shadow: 0 2px 20px rgba(0,0,0,0.07); overflow: hidden; }
 
 /* Shared invoice styles */
-.inv-hdr { background: var(--ink); color: white; padding: 28px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+.inv-hdr { background: #1a3fa3; color: white; padding: 28px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
 .inv-hdr-company { font-family: 'DM Serif Display', serif; font-size: 17px; margin-bottom: 6px; }
 .inv-hdr-detail { font-size: 11px; color: #aaa; line-height: 1.7; font-family: 'DM Mono', monospace; }
 .inv-hdr-meta { text-align: right; }
@@ -234,7 +241,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(
 .inv-body { padding: 28px 40px; }
 .inv-service-tag { font-style: italic; color: var(--muted); font-size: 13px; border-bottom: 1px solid var(--rule); padding-bottom: 10px; margin-bottom: 18px; }
 table.inv-tbl { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; }
-table.inv-tbl th { background: #f0ece5; padding: 9px 14px; text-align: left; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'DM Mono', monospace; color: var(--muted); }
+table.inv-tbl th { background: #e8eef8; padding: 9px 14px; text-align: left; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'DM Mono', monospace; color: var(--muted); }
 table.inv-tbl th.r, table.inv-tbl td.r { text-align: right; }
 table.inv-tbl td { padding: 11px 14px; border-bottom: 1px solid #f0ece5; }
 table.inv-tbl tr:last-child td { border-bottom: none; }
@@ -250,8 +257,8 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 .inv-bank-row .k { color: var(--muted); min-width: 110px; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
 .inv-bank-row .v { font-weight: 500; }
 .inv-signatory { border: 1px solid var(--rule); border-radius: 4px; padding: 18px 20px; }
-.inv-note { margin-top: 16px; padding: 12px 16px; background: #fff8e7; border-left: 3px solid #f0c040; font-size: 11px; color: #7a6010; }
-.inv-footer-bar { background: var(--ink); color: #555; padding: 12px 40px; font-size: 10px; font-family: 'DM Mono', monospace; display: flex; justify-content: space-between; }
+.inv-note { margin-top: 16px; padding: 12px 16px; background: #eef3fc; border-left: 3px solid #1a3fa3; font-size: 11px; color: #1a3fa3; }
+.inv-footer-bar { background: #1a3fa3; color: #b0c4f8; padding: 12px 40px; font-size: 10px; font-family: 'DM Mono', monospace; display: flex; justify-content: space-between; }
 
 /* ── EDIT PANEL ── */
 .edit-panel { display: none; margin-top: 16px; border: 2px solid var(--accent); border-radius: 6px; overflow: hidden; background: white; }
@@ -323,17 +330,17 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
   <div class="nav-section">
     <div class="nav-label">Rent</div>
     <div class="nav-item" onclick="showView('recepto', this)">
-      <span class="dot" style="background:#e67e22;"></span> Quick Response Tech
+      <span class="dot" style="background:white;opacity:0.7;"></span> Quick Response Tech
     </div>
     <div class="nav-item" onclick="showView('benjpoll', this)">
-      <span class="dot" style="background:#2980b9;"></span> Benj Poll
+      <span class="dot" style="background:white;opacity:0.7;"></span> Benj Poll
     </div>
   </div>
 
   <div class="nav-section">
     <div class="nav-label">Records</div>
     <div class="nav-item" onclick="showView('history', this)">
-      <span style="font-size:13px;">📋</span> Invoice History
+      <span class="dot" style="background:white;opacity:0.7;"></span> Invoice History
     </div>
   </div>
 
@@ -1009,7 +1016,7 @@ function renderHistory() {
       <div style="display:flex;justify-content:space-between;"><span>Invoices shown:</span><strong>${filtered.length}</strong></div>
       <div style="display:flex;justify-content:space-between;"><span>Total Revenue:</span><strong style="font-family:'DM Mono',monospace;">$${total.toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
       <div style="display:flex;justify-content:space-between;"><span>Paid:</span><strong style="color:var(--c-synaptic);">$${filtered.filter(r=>r.status==='Paid').reduce((s,r)=>s+r.amount,0).toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
-      <div style="display:flex;justify-content:space-between;"><span>Pending:</span><strong style="color:var(--c-infinitus);">$${filtered.filter(r=>r.status==='Pending').reduce((s,r)=>s+r.amount,0).toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
+      <div style="display:flex;justify-content:space-between;"><span>Pending:</span><strong style="color:#1a3fa3;">$${filtered.filter(r=>r.status==='Pending').reduce((s,r)=>s+r.amount,0).toLocaleString('en-US',{minimumFractionDigits:2})}</strong></div>
     </div>`;
 }
 
@@ -1212,7 +1219,7 @@ function infRender() {
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
-        <div class="inv-hdr-num" style="color:var(--c-infinitus);">#${invno}</div>
+        <div class="inv-hdr-num" style="color:#7eb3ff;">#${invno}</div>
         <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${fmtDate(dateRaw)}</div>
         <div class="inv-hdr-lbl" style="margin-top:6px;">Period</div><div class="inv-hdr-val">${period}</div>
       </div>
@@ -1228,7 +1235,7 @@ function infRender() {
       </table>
       <div class="inv-totals">
         <div class="inv-total-row"><span>Subtotal</span><span style="font-family:'DM Mono',monospace;">$${fmt(subtotal)}</span></div>
-        <div class="inv-total-row grand"><span>Balance Due</span><span style="font-family:'DM Mono',monospace;color:var(--c-infinitus);">$${fmt(subtotal)}</span></div>
+        <div class="inv-total-row grand"><span>Balance Due</span><span style="font-family:'DM Mono',monospace;color:#1a3fa3;">$${fmt(subtotal)}</span></div>
       </div>
       <div class="inv-bank">
         <div class="inv-bank-title">Bank Details</div>
@@ -1358,7 +1365,7 @@ function synRender() {
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
-        <div class="inv-hdr-num" style="color:var(--c-synaptic);">#${invno}</div>
+        <div class="inv-hdr-num" style="color:#7eb3ff;">#${invno}</div>
         <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${fmtDate(dateRaw)}</div>
       </div>
     </div>
@@ -1520,7 +1527,7 @@ function icoRender() {
       </div>
     </div>
     <div class="inv-body">
-      <div style="background:#f5f0fb;border-left:4px solid var(--c-icon);padding:10px 16px;margin-bottom:16px;border-radius:0 3px 3px 0;font-size:14px;font-weight:600;">${ref} (${period})<br><span style="font-size:11px;color:var(--muted);font-weight:400;">(Issued under GST invoicing provisions)</span></div>
+      <div style="background:#eef3fc;border-left:4px solid var(--c-icon);padding:10px 16px;margin-bottom:16px;border-radius:0 3px 3px 0;font-size:14px;font-weight:600;">${ref} (${period})<br><span style="font-size:11px;color:var(--muted);font-weight:400;">(Issued under GST invoicing provisions)</span></div>
       <table class="inv-tbl">
         <thead><tr><th style="width:75%">Particulars</th><th class="r">Amount</th></tr></thead>
         <tbody>${linesHTML}</tbody>
@@ -1633,7 +1640,7 @@ function recGenerate() {
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Tax Invoice</div>
-        <div class="inv-hdr-num">${invno}</div>
+        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
         <div class="inv-hdr-val">Date: ${date}</div>
         <div class="inv-hdr-val">Period: ${period}</div>
       </div>
@@ -1657,7 +1664,7 @@ function recGenerate() {
         <tbody>
           ${lineRows}
           <tr><td colspan="4" style="padding:0;"></td></tr>
-          <tr style="background:#f7f4ef;">
+          <tr style="background:#f0f5ff;">
             <td colspan="2" style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;">Subtotal</td>
             <td class="mono r bold">${recFmtINR(sub)}</td>
             <td></td>
@@ -1672,10 +1679,10 @@ function recGenerate() {
             <td class="mono r">${recFmtINR(sgst)}</td>
             <td style="font-size:11px;color:var(--muted);">State GST</td>
           </tr>
-          <tr style="background:#0f0e0c;">
+          <tr style="background:#1a3fa3;">
             <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:white;padding:12px 14px;">Grand Total</td>
-            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;">${recFmtINR(grand)}</td>
-            <td style="background:#0f0e0c;"></td>
+            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;background:#1a3fa3;">${recFmtINR(grand)}</td>
+            <td style="background:#1a3fa3;"></td>
           </tr>
         </tbody>
       </table>
@@ -1763,7 +1770,7 @@ function benjGenerate() {
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Tax Invoice</div>
-        <div class="inv-hdr-num">${invno}</div>
+        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
         <div class="inv-hdr-val">Date: ${date}</div>
         <div class="inv-hdr-val">Period: ${period}</div>
       </div>
@@ -1787,7 +1794,7 @@ function benjGenerate() {
         <tbody>
           ${lineRows}
           <tr><td colspan="4" style="padding:0;"></td></tr>
-          <tr style="background:#f7f4ef;">
+          <tr style="background:#f0f5ff;">
             <td colspan="2" style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;">Subtotal</td>
             <td class="mono r bold">${recFmtINR(sub)}</td>
             <td></td>
@@ -1802,10 +1809,10 @@ function benjGenerate() {
             <td class="mono r">${recFmtINR(sgst)}</td>
             <td style="font-size:11px;color:var(--muted);">State GST</td>
           </tr>
-          <tr style="background:#0f0e0c;">
+          <tr style="background:#1a3fa3;">
             <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:white;padding:12px 14px;">Grand Total</td>
-            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;">${recFmtINR(grand)}</td>
-            <td style="background:#0f0e0c;"></td>
+            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;background:#1a3fa3;">${recFmtINR(grand)}</td>
+            <td style="background:#1a3fa3;"></td>
           </tr>
         </tbody>
       </table>
@@ -1864,47 +1871,47 @@ function _openPrintOverlay(invoiceHTML) {
 
   const styles = `
     *{box-sizing:border-box;margin:0;padding:0;}
-    :root{--ink:#0f0e0c;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
-          --c-infinitus:#c8401a;--c-synaptic:#1a6b3c;--c-icon:#7b2d8b;--accent:#1a4dc8;}
+    :root{--ink:#1a3fa3;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
+          --c-infinitus:#1a3fa3;--c-synaptic:#1a3fa3;--c-icon:#1a3fa3;--accent:#1a4dc8;}
     html,body{font-family:'DM Sans',sans-serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     .invoice-wrap{width:100%;display:flex;flex-direction:column;min-height:100vh;}
     .invoice-wrap .invoice-paper{display:flex;flex-direction:column;flex:1;}
     .invoice-wrap .invoice-paper .inv-body{flex:1;}
-    .inv-hdr{background:#0f0e0c!important;color:white;padding:44px 40px 36px;display:flex;justify-content:space-between;align-items:flex-start;}
+    .inv-hdr{background:#1a3fa3!important;color:white;padding:44px 40px 36px;display:flex;justify-content:space-between;align-items:flex-start;}
     .inv-hdr-company{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:6px;color:white;}
     .inv-hdr-detail{font-size:11px;color:#aaa;line-height:1.7;font-family:'DM Mono',monospace;}
     .inv-hdr-meta{text-align:right;}
     .inv-hdr-num{font-family:'DM Serif Display',serif;font-size:30px;}
     .inv-hdr-lbl{font-size:10px;color:#888;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:3px;}
     .inv-hdr-val{font-size:13px;color:#ddd;}
-    .inv-addr-bar{padding:20px 40px;display:grid;grid-template-columns:1fr 1fr;gap:24px;border-bottom:1px solid #e0dbd2;}
+    .inv-addr-bar{padding:20px 40px;display:grid;grid-template-columns:1fr 1fr;gap:24px;border-bottom:1px solid #c8d8f0;}
     .inv-addr-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8a8580;margin-bottom:5px;}
     .inv-addr-name{font-weight:600;font-size:14px;}
     .inv-addr-detail{font-size:12px;color:#8a8580;line-height:1.6;}
-    .inv-service-tag{font-style:italic;color:#8a8580;font-size:13px;border-bottom:1px solid #e0dbd2;padding-bottom:10px;margin-bottom:18px;}
+    .inv-service-tag{font-style:italic;color:#8a8580;font-size:13px;border-bottom:1px solid #c8d8f0;padding-bottom:10px;margin-bottom:18px;}
     .inv-body{padding:36px 40px 48px;}
     table.inv-tbl{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;}
-    table.inv-tbl th{background:#f0ece5!important;padding:9px 14px;text-align:left;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:#8a8580;}
+    table.inv-tbl th{background:#e8eef8!important;padding:9px 14px;text-align:left;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:#8a8580;}
     table.inv-tbl th.r,table.inv-tbl td.r{text-align:right;}
     table.inv-tbl td{padding:11px 14px;border-bottom:1px solid #f0ece5;}
     table.inv-tbl tr:last-child td{border-bottom:none;}
     table.inv-tbl td.mono{font-family:'DM Mono',monospace;}
     table.inv-tbl td.bold{font-weight:700;font-family:'DM Mono',monospace;}
     .inv-totals{margin-left:auto;width:280px;margin-bottom:24px;}
-    .inv-total-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #e0dbd2;font-size:13px;}
+    .inv-total-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #c8d8f0;font-size:13px;}
     .inv-total-row.grand{font-family:'DM Serif Display',serif;font-size:20px;border-bottom:none;padding-top:12px;}
     .inv-bank-grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
-    .inv-bank{background:#f7f4ef!important;border-radius:4px;padding:18px 20px;}
+    .inv-bank{background:#f0f5ff!important;border-radius:4px;padding:18px 20px;}
     .inv-bank-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#8a8580;margin-bottom:10px;}
     .inv-bank-row{display:flex;gap:8px;margin-bottom:4px;font-size:11px;}
     .inv-bank-row .k{color:#8a8580;min-width:110px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;}
     .inv-bank-row .v{font-weight:500;}
     .inv-signatory{border:1px solid #e0dbd2;border-radius:4px;padding:18px 20px;}
-    .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#fff8e7!important;border-left:3px solid #f0c040;font-size:11px;color:#7a6010;}
-    .inv-footer-bar{background:#0f0e0c!important;color:#555;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
-    [style*="background:var(--c-icon)"],[style*="background:#7b2d8b"]{background:#7b2d8b!important;}
-    [style*="background:#f5f0fb"]{background:#f5f0fb!important;}
-    [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#0f0e0c!important;}
+    .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#eef3fc!important;border-left:3px solid #1a3fa3;font-size:11px;color:#1a3fa3;}
+    .inv-footer-bar{background:#1a3fa3!important;color:#b0c4f8;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
+    [style*="background:var(--c-icon)"],[style*="background:#1a3fa3"]{background:#1a3fa3!important;}
+    [style*="background:#f5f0fb"]{background:#eef3fc!important;}
+    [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#1a3fa3!important;}
   `;
 
   const iframe = document.createElement('iframe');
@@ -1917,13 +1924,13 @@ function _openPrintOverlay(invoiceHTML) {
   doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap">
     <style>${styles}
-      #iframeToolbar{background:#0f0e0c;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;position:sticky;top:0;z-index:10;}
-      #iframeTip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#7a6010;font-family:'DM Sans',sans-serif;}
+      #iframeToolbar{background:#1a3fa3;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;position:sticky;top:0;z-index:10;}
+      #iframeTip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#1a3fa3;font-family:'DM Sans',sans-serif;}
       @media print{@page{margin:0;size:A4 portrait;}#iframeToolbar,#iframeTip{display:none!important;}html,body{height:100%;}
         .invoice-wrap{min-height:100vh;}.invoice-wrap .invoice-paper{min-height:100vh;}}
     </style>
   </head><body>
-    <div id="iframeToolbar">
+    <div id="iframeToolbar" style="background:#1a3fa3;">
       <span style="font-weight:600;">📄 Invoice — Ready to Print</span>
       <button onclick="parent.document.getElementById('printFrame').contentWindow.print()" style="background:#1a4dc8;color:white;border:none;border-radius:4px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;margin-left:auto;">🖨️ Print / Save as PDF</button>
       <button onclick="document.getElementById('printFrame').remove()" style="background:transparent;color:#aaa;border:1px solid #444;border-radius:4px;padding:8px 14px;font-size:13px;cursor:pointer;">✕ Close</button>
@@ -1948,22 +1955,22 @@ function _openPrintOverlay_popup(invoiceHTML) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap">
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
-  :root{--ink:#0f0e0c;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
-        --c-infinitus:#c8401a;--c-synaptic:#1a6b3c;--c-icon:#7b2d8b;--accent:#1a4dc8;}
+  :root{--ink:#1a3fa3;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
+        --c-infinitus:#1a3fa3;--c-synaptic:#1a3fa3;--c-icon:#1a3fa3;--accent:#1a4dc8;}
   html,body{height:100%;font-family:'DM Sans',sans-serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 
   /* toolbar */
-  #toolbar{background:#0f0e0c;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;}
+  #toolbar{background:#1a3fa3;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;}
   #toolbar button{padding:8px 20px;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;}
   #toolbar .btn-print{background:#1a4dc8;color:white;margin-left:auto;}
   #toolbar .btn-close{background:transparent;color:#aaa;border:1px solid #444!important;}
-  #tip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#7a6010;font-family:'DM Sans',sans-serif;}
+  #tip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#1a3fa3;font-family:'DM Sans',sans-serif;}
 
   /* invoice */
   .invoice-wrap{width:100%;max-width:860px;margin:0 auto;display:flex;flex-direction:column;min-height:100vh;}
   .invoice-wrap .invoice-paper{display:flex;flex-direction:column;flex:1;}
   .invoice-wrap .invoice-paper .inv-body{flex:1;}
-  .inv-hdr{background:#0f0e0c!important;color:white;padding:44px 40px 36px;display:flex;justify-content:space-between;align-items:flex-start;}
+  .inv-hdr{background:#1a3fa3!important;color:white;padding:44px 40px 36px;display:flex;justify-content:space-between;align-items:flex-start;}
   .inv-hdr-company{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:6px;color:white;}
   .inv-hdr-detail{font-size:11px;color:#aaa;line-height:1.7;font-family:'DM Mono',monospace;}
   .inv-hdr-meta{text-align:right;}
@@ -1977,7 +1984,7 @@ function _openPrintOverlay_popup(invoiceHTML) {
   .inv-service-tag{font-style:italic;color:var(--muted);font-size:13px;border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:18px;}
   .inv-body{padding:36px 40px 48px;}
   table.inv-tbl{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;}
-  table.inv-tbl th{background:#f0ece5!important;padding:9px 14px;text-align:left;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--muted);}
+  table.inv-tbl th{background:#e8eef8!important;padding:9px 14px;text-align:left;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--muted);}
   table.inv-tbl th.r, table.inv-tbl td.r{text-align:right;}
   table.inv-tbl td{padding:11px 14px;border-bottom:1px solid #f0ece5;}
   table.inv-tbl tr:last-child td{border-bottom:none;}
@@ -1987,19 +1994,19 @@ function _openPrintOverlay_popup(invoiceHTML) {
   .inv-total-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:13px;}
   .inv-total-row.grand{font-family:'DM Serif Display',serif;font-size:20px;border-bottom:none;padding-top:12px;}
   .inv-bank-grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
-  .inv-bank{background:#f7f4ef!important;border-radius:4px;padding:18px 20px;}
+  .inv-bank{background:#f0f5ff!important;border-radius:4px;padding:18px 20px;}
   .inv-bank-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .inv-bank-row{display:flex;gap:8px;margin-bottom:4px;font-size:11px;}
   .inv-bank-row .k{color:var(--muted);min-width:110px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;}
   .inv-bank-row .v{font-weight:500;}
   .inv-signatory{border:1px solid var(--rule);border-radius:4px;padding:18px 20px;}
-  .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#fff8e7!important;border-left:3px solid #f0c040;font-size:11px;color:#7a6010;}
-  .inv-footer-bar{background:#0f0e0c!important;color:#555;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
+  .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#fff8e7!important;border-left:3px solid #f0c040;font-size:11px;color:#1a3fa3;}
+  .inv-footer-bar{background:#1a3fa3!important;color:#b0c4f8;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
 
   /* ICO-specific colours */
-  [style*="background:var(--c-icon)"],[style*="background:#7b2d8b"]{background:#7b2d8b!important;}
-  [style*="background:#f5f0fb"]{background:#f5f0fb!important;}
-  [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#0f0e0c!important;}
+  [style*="background:var(--c-icon)"],[style*="background:#1a3fa3"]{background:#1a3fa3!important;}
+  [style*="background:#f5f0fb"]{background:#eef3fc!important;}
+  [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#1a3fa3!important;}
 
   @media print {
     @page{margin:0;size:A4 portrait;}
