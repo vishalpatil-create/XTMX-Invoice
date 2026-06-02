@@ -1137,62 +1137,9 @@ async function emailInvoiceToPrasanna(paperId) {
     return;
   }
 
-  toast('⏳ Preparing invoice PDF...');
+  toast('⏳ Sending invoice to Prasanna...');
 
   try {
-    // Render the invoice element to canvas
-    // Render invoice into a hidden full-width container for accurate capture
-    const A4_PX = 794;
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = `position:fixed;left:-9999px;top:0;width:${A4_PX}px;background:white;z-index:-1;`;
-    wrapper.innerHTML = paperEl.outerHTML;
-    document.body.appendChild(wrapper);
-    const captureEl = wrapper.firstElementChild;
-
-    // Apply all computed styles from the original
-    captureEl.style.width = A4_PX + 'px';
-    captureEl.style.minWidth = A4_PX + 'px';
-    captureEl.style.boxShadow = 'none';
-    captureEl.style.border = 'none';
-
-    // Wait for fonts/layout
-    await new Promise(r => setTimeout(r, 300));
-
-    const canvas = await html2canvas(wrapper, {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: A4_PX,
-      height: wrapper.scrollHeight,
-      windowWidth: A4_PX
-    });
-
-    document.body.removeChild(wrapper);
-
-    // Convert canvas to PDF — fit width exactly, paginate naturally
-    const { jsPDF } = window.jspdf;
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    // imgH in mm based on canvas aspect ratio at full page width
-    const imgH = (canvas.height * pageW) / canvas.width;
-    let yOffset = 0;
-    let remaining = imgH;
-    while (remaining > 0) {
-      pdf.addImage(imgData, 'JPEG', 0, -yOffset, pageW, imgH);
-      remaining -= pageH;
-      if (remaining > 0) { pdf.addPage(); yOffset += pageH; }
-    }
-
-    // Get PDF as base64
-    const pdfBase64 = pdf.output('datauristring').split(',')[1];
-
-    toast('⏳ Sending email via Gmail...');
-
-    // ── Send via Google Apps Script Web App ──
-    // Replace the URL below with your deployed Apps Script Web App URL
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec';
 
     const { invno, client, period, amount, date } = currentInvoice;
@@ -1200,7 +1147,8 @@ async function emailInvoiceToPrasanna(paperId) {
       ? '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2 })
       : String(amount);
 
-    const payload = { invno, client, period, date, amount: amountFormatted, pdfBase64 };
+    // Send invoice HTML directly — Apps Script renders PDF server-side
+    const payload = { invno, client, period, date, amount: amountFormatted, invoiceHTML: paperEl.outerHTML };
 
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
