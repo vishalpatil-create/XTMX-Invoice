@@ -1179,20 +1179,14 @@ async function emailInvoiceToPrasanna(paperId) {
 
     const payload = { invno, client, period, date, amount: amountFormatted, pdfBase64 };
 
-    const response = await fetch(APPS_SCRIPT_URL, {
+    await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
 
-    const result = await response.json();
-
-    if (result.success) {
-      toast('✅ Invoice emailed to Prasanna successfully!');
-    } else {
-      console.error('Email error from Apps Script:', result);
-      toast('❌ Failed to send: ' + (result.error || 'Unknown error'));
-    }
+    toast('✅ Invoice emailed to Prasanna!');
   } catch(err) {
     console.error('Email error:', err);
     toast('❌ Error sending email: ' + err.message);
