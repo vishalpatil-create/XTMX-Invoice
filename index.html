@@ -1169,17 +1169,20 @@ async function emailInvoiceToPrasanna(paperId) {
 
     document.body.removeChild(wrapper);
 
-    // Convert canvas to PDF using jsPDF — fill full A4 page
+    // Convert canvas to PDF using jsPDF — scale to fill full A4 page
     const { jsPDF } = window.jspdf;
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
+    // Scale image so it fills the full page width AND at minimum full page height
     const imgH = (canvas.height * pageW) / canvas.width;
+    const scaledH = Math.max(imgH, pageH);
+    const scaledW = (scaledH * pageW) / imgH;
     let yOffset = 0;
-    let remaining = imgH;
+    let remaining = scaledH;
     while (remaining > 0) {
-      pdf.addImage(imgData, 'JPEG', 0, -yOffset, pageW, imgH);
+      pdf.addImage(imgData, 'JPEG', 0, -yOffset, scaledW, scaledH);
       remaining -= pageH;
       if (remaining > 0) { pdf.addPage(); yOffset += pageH; }
     }
