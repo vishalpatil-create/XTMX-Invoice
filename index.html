@@ -8,6 +8,42 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+/* ══════════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════════ */
+#login-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0d1b2e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+}
+#login-screen.hidden { display: none; }
+.login-card {
+  background: white; border-radius: 16px;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.login-header {
+  background: linear-gradient(135deg, #0d1b2e 0%, #1a3fa3 100%);
+  padding: 40px 40px 32px; text-align: center;
+}
+.login-header .logo { font-family: 'DM Serif Display', serif; font-size: 28px; color: white; }
+.login-header .logo span { color: #5b9bd5; }
+.login-header .tagline { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 8px; }
+.login-body { padding: 36px 40px 40px; }
+.login-body h2 { font-size: 18px; font-weight: 600; color: #0d1b2e; margin-bottom: 6px; }
+.login-body p { font-size: 13px; color: #8a8580; margin-bottom: 28px; }
+.login-field { margin-bottom: 18px; }
+.login-field label { display: block; font-size: 11px; font-weight: 600; color: #0d1b2e; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 7px; }
+.login-field input { width: 100%; padding: 12px 16px; border: 1.5px solid #e0dbd2; border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: #0d1b2e; background: #fafafa; outline: none; transition: border 0.15s; }
+.login-field input:focus { border-color: #1a3fa3; background: white; }
+.login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #1a3fa3, #2255cc); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s; margin-top: 8px; }
+.login-btn:hover { opacity: 0.9; }
+.login-error { background: #fff0f0; border: 1px solid #fcc; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #c0392b; margin-bottom: 16px; display: none; }
+.login-footer { text-align: center; margin-top: 24px; font-size: 11px; color: #bbb; font-family: 'DM Mono', monospace; }
+
+
 :root {
   --ink: #1a3fa3;
   --paper: #f7f4ef;
@@ -301,7 +337,33 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 <body>
 
 <!-- SIDEBAR -->
-<nav class="sidebar">
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">XTrans<span>Matrix</span></div>
+      <div class="tagline">Revenue &amp; Invoice Portal</div>
+    </div>
+    <div class="login-body">
+      <h2>Welcome back</h2>
+      <p>Sign in to access the portal</p>
+      <div class="login-error" id="login-error">Incorrect username or password.</div>
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Enter your username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="login-btn" onclick="doLogin()">Sign In →</button>
+      <div class="login-footer">XTransMatrix Consulting Services Pvt Ltd</div>
+    </div>
+  </div>
+</div>
+
+<div id="app-wrapper" style="display:none;width:100%;display:none;"><nav class="sidebar">
   <div class="sidebar-logo">
     <div class="brand">XTrans<span>Matrix</span></div>
     <div class="sub">Revenue & Invoice Portal</div>
@@ -354,6 +416,8 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">Dashboard <span>Revenue Overview</span></div>
     <div class="topbar-actions">
+      <span id="topbar-user" style="font-size:12px;color:#8a8580;font-family:'DM Mono',monospace;margin-right:8px;"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="font-size:11px;color:#c0392b;border-color:#fcc;">⎋ Sign Out</button>
       <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Export PDF</button>
       <button class="btn btn-dark btn-sm" onclick="saveInvoiceRecord()">💾 Save Invoice</button>
     </div>
@@ -881,11 +945,60 @@ let synEmpData = [];
 let icoSowData = [];
 
 // init dates
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+const USERS = [
+  { username: 'founder', password: 'founder@xtm', name: 'Founder', role: 'founder' },
+  { username: 'finance', password: 'finance@xtm', name: 'Finance', role: 'finance' },
+];
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  const user = USERS.find(x => x.username === u && x.password === p);
+  if (user) {
+    sessionStorage.setItem('xtm_user', JSON.stringify(user));
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-wrapper').style.display = 'contents';
+    err.style.display = 'none';
+    const el = document.getElementById('topbar-user');
+    if (el) el.textContent = '👤 ' + user.name;
+  } else {
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+function checkAuth() {
+  const user = sessionStorage.getItem('xtm_user');
+  if (user) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('app-wrapper').style.display = 'contents';
+    const el = document.getElementById('topbar-user');
+    const u = JSON.parse(user);
+    if (el) el.textContent = '👤 ' + u.name;
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('xtm_user');
+  document.getElementById('app-wrapper').style.display = 'none';
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-user').focus();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   ['inf-date','syn-date','ico-date','rec-date','benj-date'].forEach(id => { const el=document.getElementById(id); if(el) el.value=today; });
   synInitRows(); icoInitRows(); recInitRows(); benjInitRows();
   updateDashboard();
+  checkAuth();
 });
 
 // ══════════════════════════════════════════
@@ -2025,6 +2138,7 @@ function _openPrintOverlay_popup(invoiceHTML) {
 </div>
 <div id="tip">💡 In print dialog: <strong>Margins → None</strong> · <strong>Background graphics ✓</strong> · Destination → <strong>Save as PDF</strong></div>
 <div class="invoice-wrap">${invoiceHTML}</div>
+</div>
 </body>
 </html>`);
   pw.document.close();
@@ -2040,5 +2154,6 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 3200);
 }
 </script>
+</div>
 </body>
 </html>
