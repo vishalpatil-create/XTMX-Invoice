@@ -1194,32 +1194,33 @@ async function emailInvoiceToPrasanna(paperId) {
 
     toast('⏳ Sending email...');
 
-    // Split large PDF into chunks and send
-    const chunkSize = 500000; // 500KB chunks
-    const totalChunks = Math.ceil(pdfBase64.length / chunkSize);
-    
-    for (let i = 0; i < totalChunks; i++) {
-      const chunk = pdfBase64.slice(i * chunkSize, (i + 1) * chunkSize);
-      const isLast = i === totalChunks - 1;
-      
-      const payload = { 
-        invno, client, period, date, amount: amountFormatted,
-        pdfChunk: chunk,
-        chunkIndex: i,
-        totalChunks: totalChunks,
-        isLast: isLast,
-        fileName: 'Invoice_' + invno + '_' + client + '.pdf'
-      };
+    // Use hidden form POST — no CORS issues, works with large payloads
+    const payload = JSON.stringify({ invno, client, period, date, amount: amountFormatted, pdfBase64 });
 
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
-      });
-      
-      await new Promise(r => setTimeout(r, 200));
-    }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = 'hidden_iframe';
+    form.style.display = 'none';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = payload;
+    form.appendChild(input);
+
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+
+    form.submit();
+
+    await new Promise(r => setTimeout(r, 2000));
+
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
 
     toast('✅ Invoice emailed to Prasanna!');
   } catch(err) {
