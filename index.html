@@ -560,7 +560,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
             <div class="form-field"><label>Company Name</label><input id="ie_company" oninput="infRender()" value="XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED"/></div>
             <div class="form-field"><label>GST</label><input id="ie_gst" oninput="infRender()" value="29AAACX3107G1ZH"/></div>
             <div class="form-field"><label>Phone</label><input id="ie_phone" oninput="infRender()" value="+91 – 934 008 7935"/></div>
-            <div class="form-field"><label>Email</label><input id="ie_email" oninput="infRender()" value="accounting@xtransmatrix.com"/></div>
+            <div class="form-field"><label>Email</label><input id="ie_email" oninput="infRender()" value="prasanna.patel@xtransmatrix.com | account@xtransmatrix.com"/></div>
           </div>
           <div class="form-row">
             <div class="form-field"><label>Invoice #</label><input id="ie_invno" oninput="infRender()"/></div>
@@ -576,16 +576,19 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="inf-tab-bank">
           <div class="form-row">
+            <div class="form-field"><label>Beneficiary</label><input id="ie_bene" oninput="infRender()" value="XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED"/></div>
             <div class="form-field"><label>Bank</label><input id="ie_bank" oninput="infRender()" value="ICICI Bank Ltd"/></div>
             <div class="form-field"><label>Account No</label><input id="ie_acct" oninput="infRender()" value="318005000874"/></div>
             <div class="form-field"><label>IFSC</label><input id="ie_ifsc" oninput="infRender()" value="ICIC0003180"/></div>
+            <div class="form-field"><label>Account Type</label><input id="ie_actype" oninput="infRender()" value="Current"/></div>
+            <div class="form-field"><label>MICR</label><input id="ie_micr" oninput="infRender()" value="560229115"/></div>
             <div class="form-field"><label>SWIFT</label><input id="ie_swift" oninput="infRender()" value="ICICINBB"/></div>
             <div class="form-field"><label>Branch</label><input id="ie_branch" oninput="infRender()" value="Hebbal, Bangalore 560024"/></div>
           </div>
         </div>
         <div class="edit-pane" id="inf-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="ie_note" oninput="infRender()">Export against LUT without payment of GST · IEC & LUT No: AD290425003857U</textarea></div>
+            <div class="form-field"><label>Note</label><textarea id="ie_note" oninput="infRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
           </div>
         </div>
         <div class="edit-apply-row">
@@ -675,15 +678,15 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="syn-tab-bank">
           <div class="form-row">
-            <div class="form-field"><label>Bank</label><input id="se_bank" oninput="synRender()" value="Axis Bank Ltd"/></div>
-            <div class="form-field"><label>Account No</label><input id="se_acct" oninput="synRender()" value="924020021430492"/></div>
-            <div class="form-field"><label>IFSC</label><input id="se_ifsc" oninput="synRender()" value="UTIB0000094"/></div>
-            <div class="form-field"><label>SWIFT</label><input id="se_swift" oninput="synRender()" value="AXISINBB094"/></div>
+            <div class="form-field"><label>Bank</label><input id="se_bank" oninput="synRender()" value="ICICI Bank Ltd"/></div>
+            <div class="form-field"><label>Account No</label><input id="se_acct" oninput="synRender()" value="318005000874"/></div>
+            <div class="form-field"><label>IFSC</label><input id="se_ifsc" oninput="synRender()" value="ICIC0003180"/></div>
+            <div class="form-field"><label>SWIFT</label><input id="se_swift" oninput="synRender()" value="ICICINBB"/></div>
           </div>
         </div>
         <div class="edit-pane" id="syn-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="se_note" oninput="synRender()">Export against LUT without payment of GST · IEC & LUT No: AD290425003857U</textarea></div>
+            <div class="form-field"><label>Note</label><textarea id="se_note" oninput="synRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
           </div>
         </div>
         <div class="edit-apply-row"><button class="btn btn-primary btn-sm" onclick="synRender()">↻ Refresh</button><span class="edit-hint">Updates live</span></div>
@@ -791,7 +794,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="ico-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="ie2_note" oninput="icoRender()">Export against LUT without payment of GST · IEC & LUT No: AD290425003857U</textarea></div>
+            <div class="form-field"><label>Note</label><textarea id="ie2_note" oninput="icoRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
           </div>
         </div>
         <div class="edit-apply-row"><button class="btn btn-primary btn-sm" onclick="icoRender()">↻ Refresh</button><span class="edit-hint">Updates live</span></div>
@@ -1395,7 +1398,7 @@ function infRender() {
     <div class="inv-hdr">
       <div>
         <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">7th Floor, Brigade Triumph, Byatarayanapura, Bangalore 560092<br>GST: ${gst} | Ph: ${phone} | ${email}</div>
+        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${gst} | Ph: ${phone} | ${email}</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
@@ -1419,9 +1422,12 @@ function infRender() {
       </div>
       <div class="inv-bank">
         <div class="inv-bank-title">Bank Details</div>
+        <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
         <div class="inv-bank-row"><span class="k">Bank</span><span class="v">${bank}</span></div>
         <div class="inv-bank-row"><span class="k">Account No</span><span class="v">${acct}</span></div>
         <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">${ifsc}</span></div>
+        <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
+        <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
         <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">${swift}</span></div>
         <div class="inv-bank-row"><span class="k">Branch</span><span class="v">${branch}</span></div>
       </div>
@@ -1541,7 +1547,7 @@ function synRender() {
     <div class="inv-hdr">
       <div>
         <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">7th Floor, Brigade Triumph, Byatarayanapura, Bangalore 560092<br>GST: ${document.getElementById('se_gst').value}</div>
+        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${document.getElementById('se_gst').value}</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
@@ -1565,14 +1571,18 @@ function synRender() {
       </div>
       <div class="inv-bank">
         <div class="inv-bank-title">Bank Details</div>
+        <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
         <div class="inv-bank-row"><span class="k">Bank</span><span class="v">${bank}</span></div>
         <div class="inv-bank-row"><span class="k">Account No</span><span class="v">${acct}</span></div>
         <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">${ifsc}</span></div>
+        <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
+        <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
         <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">${swift}</span></div>
+        <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
       </div>
       <div class="inv-note"><strong>Note:</strong> ${note}</div>
     </div>
-    <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>accounting@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 }
 
 function synReset() {
@@ -1681,66 +1691,78 @@ function icoRender() {
 
   currentInvoice={ client:'ICON', invno, period, amount:subtotal, date:invDateDisplay };
 
-  const linesHTML=data.map(r=>`<tr>
-    <td>${r.name} (${r.sow}): ${r.hours} hrs × $${r.rate}</td>
-    <td class="mono r bold" style="color:var(--c-icon);">$${fmt(r.usd)}</td></tr>`).join('');
+  const linesHTML = data.map(r => '<tr>' +
+    '<td style="font-weight:500;">' + r.name + '</td>' +
+    '<td class="mono r">' + r.sow + '</td>' +
+    '<td class="mono r">' + r.hours + '</td>' +
+    '<td class="mono r">$' + r.rate.toFixed(2) + '</td>' +
+    '<td class="bold r">$' + fmt(r.usd) + '</td></tr>'
+  ).join('');
 
   document.getElementById('ico-paper').innerHTML=`
     <div class="inv-hdr">
       <div>
         <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">7th Floor, Brigade Triumph, Byatarayanapura, Bangalore (KA) 560092<br>GSTIN: ${gstin} | CIN: ${cin}<br>PH: ${phone} | ${email}</div>
+        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GSTIN: ${gstin} | CIN: ${cin} | PH: ${phone}<br>${email}</div>
       </div>
       <div class="inv-hdr-meta">
-        <div style="font-family:'DM Serif Display',serif;font-size:24px;color:var(--c-icon);">INVOICE</div>
-        <div class="inv-hdr-lbl" style="margin-top:8px;">Invoice Number</div><div class="inv-hdr-val">${invno}</div>
-        <div class="inv-hdr-lbl" style="margin-top:6px;">Invoice Date</div><div class="inv-hdr-val">${invDateDisplay}</div>
+        <div class="inv-hdr-lbl">Tax Invoice</div>
+        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
+        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${invDateDisplay}</div>
+        <div class="inv-hdr-lbl" style="margin-top:6px;">Period</div><div class="inv-hdr-val">${period}</div>
         <div class="inv-hdr-lbl" style="margin-top:6px;">Reference</div><div class="inv-hdr-val">${ref}</div>
       </div>
     </div>
-    <div style="background:var(--c-icon);color:white;padding:14px 40px;display:flex;justify-content:space-between;align-items:flex-start;">
+    <div class="inv-addr-bar">
       <div>
-        <div style="font-size:10px;opacity:0.7;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">To</div>
-        <div style="font-weight:600;font-size:14px;">${attn}</div>
-        <div style="opacity:0.9;margin-top:2px;">${clientco}</div>
-        <div style="opacity:0.7;font-size:11px;margin-top:2px;">${clientaddr} | ${clientphone} | ${clientemail}</div>
+        <div class="inv-addr-lbl">From</div>
+        <div class="inv-addr-name">${company}</div>
+        <div class="inv-addr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura<br>Bangalore North, Karnataka, India, 560092<br>GSTIN: ${gstin}</div>
+      </div>
+      <div>
+        <div class="inv-addr-lbl">Bill To — Attention: ${attn}</div>
+        <div class="inv-addr-name">${clientco}</div>
+        <div class="inv-addr-detail">${clientaddr.replace(/\n/g,'<br>')}<br>Ph: ${clientphone} | ${clientemail}</div>
       </div>
     </div>
     <div class="inv-body">
-      <div style="background:#eef3fc;border-left:4px solid var(--c-icon);padding:10px 16px;margin-bottom:16px;border-radius:0 3px 3px 0;font-size:14px;font-weight:600;">${ref} (${period})<br><span style="font-size:11px;color:var(--muted);font-weight:400;">(Issued under GST invoicing provisions)</span></div>
+      <div class="inv-service-tag">${ref} · ${period} · Issued under GST invoicing provisions</div>
       <table class="inv-tbl">
-        <thead><tr><th style="width:75%">Particulars</th><th class="r">Amount</th></tr></thead>
+        <thead><tr><th>Consultant</th><th class="r">SOW</th><th class="r">Hours</th><th class="r">Rate</th><th class="r">Amount (USD)</th></tr></thead>
         <tbody>${linesHTML}</tbody>
         <tfoot>
-          <tr style="border-top:2px solid var(--ink);"><td style="padding:9px 14px;font-weight:600;">Sub Total</td><td class="mono r" style="padding:9px 14px;font-weight:600;">$${fmt(subtotal)}</td></tr>
-          <tr><td style="padding:9px 14px;color:var(--muted);font-size:12px;">GST @ 0% (LUT Export)</td><td class="mono r" style="padding:9px 14px;color:var(--muted);font-size:12px;">–</td></tr>
-          <tr style="background:var(--ink);"><td style="padding:10px 14px;color:white;font-family:'DM Serif Display',serif;font-size:16px;">Total USD</td><td style="padding:10px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:18px;color:var(--c-icon);font-weight:600;">$${fmt(subtotal)}</td></tr>
+          <tr style="background:#f0f4f9;"><td colspan="4" style="padding:9px 14px;font-weight:600;text-align:right;">Sub Total</td><td class="mono r" style="padding:9px 14px;font-weight:600;">$${fmt(subtotal)}</td></tr>
+          <tr><td colspan="4" style="padding:7px 14px;color:var(--muted);font-size:12px;text-align:right;">GST @ 0% (LUT Export)</td><td class="mono r" style="padding:7px 14px;color:var(--muted);font-size:12px;">–</td></tr>
+          <tr style="background:#1a3fa3;"><td colspan="4" style="padding:11px 14px;color:white;font-family:'DM Serif Display',serif;font-size:15px;">Total USD</td><td style="padding:11px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:17px;color:white;font-weight:700;">$${fmt(subtotal)}</td></tr>
         </tfoot>
       </table>
       <div class="inv-bank-grid-2col">
         <div class="inv-bank">
           <div class="inv-bank-title">Bank Details</div>
-          <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">${company}</span></div>
-          <div class="inv-bank-row"><span class="k">Bank, Branch</span><span class="v">${bank}</span></div>
-          <div class="inv-bank-row"><span class="k">Current A/c</span><span class="v">${acct}</span></div>
-          <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">${ifsc}</span></div>
-          <div class="inv-bank-row"><span class="k">Swift Code</span><span class="v">${swift}</span></div>
+          <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
+          <div class="inv-bank-row"><span class="k">Bank</span><span class="v">ICICI Bank Ltd</span></div>
+          <div class="inv-bank-row"><span class="k">Account No</span><span class="v">318005000874</span></div>
+          <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">ICIC0003180</span></div>
+          <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
+          <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
+          <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">ICICINBB</span></div>
+          <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
           <div class="inv-bank-row"><span class="k">PAN</span><span class="v">${pan}</span></div>
           <div class="inv-bank-row"><span class="k">GST No.</span><span class="v">${gstin}</span></div>
         </div>
         <div class="inv-signatory" style="border:1px solid var(--rule);border-radius:4px;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;">
           <div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">For, ${company}</div>
-            <div style="height:28px;"></div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">For, ${company}</div>
+            <div style="height:40px;border-bottom:1px solid var(--rule);margin-bottom:10px;"></div>
             <div style="font-family:'DM Serif Display',serif;font-size:17px;">${signame}</div>
-            <div style="font-size:12px;color:var(--muted);">${sigrole}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;">${sigrole}</div>
           </div>
-          <div style="font-size:10px;color:var(--muted);font-style:italic;margin-top:8px;">🔏 This is a digitally signed document</div>
+          <div style="font-size:10px;color:var(--muted);font-style:italic;margin-top:12px;">🔏 Digitally authorised document</div>
         </div>
       </div>
       <div class="inv-note"><strong>Note:</strong> ${note}</div>
     </div>
-    <div class="inv-footer-bar"><span>${company}</span><span>${invno}</span><span>${email}</span></div>`;
+    <div class="inv-footer-bar"><span>${company}</span><span>${invno} · ${period}</span><span>${email}</span></div>`;
 }
 
 function icoReset() {
@@ -1829,7 +1851,7 @@ function recGenerate() {
       <div>
         <div class="inv-addr-lbl">From</div>
         <div class="inv-addr-name">XTRANSMATRIX CONSULTING SERVICES PVT LTD</div>
-        <div class="inv-addr-detail">Bengaluru, Karnataka 560024<br>GSTIN: 29AAACX3107G1ZH</div>
+        <div class="inv-addr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GSTIN: 29AAACX3107G1ZH</div>
       </div>
       <div>
         <div class="inv-addr-lbl">Bill To</div>
@@ -1866,9 +1888,20 @@ function recGenerate() {
           </tr>
         </tbody>
       </table>
+      <div class="inv-bank" style="margin-top:20px;">
+        <div class="inv-bank-title">Bank Details</div>
+        <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
+        <div class="inv-bank-row"><span class="k">Bank</span><span class="v">ICICI Bank Ltd</span></div>
+        <div class="inv-bank-row"><span class="k">Account No</span><span class="v">318005000874</span></div>
+        <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">ICIC0003180</span></div>
+        <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
+        <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
+        <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">ICICINBB</span></div>
+        <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
+      </div>
       <div class="inv-note"><strong>Note:</strong> GST applicable as per intra-state supply. CGST 9% + SGST 9% = 18% total GST.</div>
     </div>
-    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>accounting@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 
   document.getElementById('rec-preview').style.display = 'block';
   document.getElementById('rec-preview').scrollIntoView({ behavior:'smooth' });
@@ -1959,7 +1992,7 @@ function benjGenerate() {
       <div>
         <div class="inv-addr-lbl">From</div>
         <div class="inv-addr-name">XTRANSMATRIX CONSULTING SERVICES PVT LTD</div>
-        <div class="inv-addr-detail">Bengaluru, Karnataka 560024<br>GSTIN: 29AAACX3107G1ZH</div>
+        <div class="inv-addr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GSTIN: 29AAACX3107G1ZH</div>
       </div>
       <div>
         <div class="inv-addr-lbl">Bill To</div>
@@ -1996,9 +2029,20 @@ function benjGenerate() {
           </tr>
         </tbody>
       </table>
+      <div class="inv-bank" style="margin-top:20px;">
+        <div class="inv-bank-title">Bank Details</div>
+        <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
+        <div class="inv-bank-row"><span class="k">Bank</span><span class="v">ICICI Bank Ltd</span></div>
+        <div class="inv-bank-row"><span class="k">Account No</span><span class="v">318005000874</span></div>
+        <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">ICIC0003180</span></div>
+        <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
+        <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
+        <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">ICICINBB</span></div>
+        <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
+      </div>
       <div class="inv-note"><strong>Note:</strong> GST applicable as per intra-state supply. CGST 9% + SGST 9% = 18% total GST.</div>
     </div>
-    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>accounting@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 
   document.getElementById('benj-preview').style.display = 'block';
   document.getElementById('benj-preview').scrollIntoView({ behavior:'smooth' });
