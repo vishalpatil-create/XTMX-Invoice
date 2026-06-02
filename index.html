@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XTransMatrix · Revenue & Invoice Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -420,6 +422,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
       <button class="btn btn-ghost btn-sm" onclick="doLogout()" style="font-size:11px;color:#c0392b;border-color:#fcc;">⎋ Sign Out</button>
       <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Export PDF</button>
       <button class="btn btn-dark btn-sm" onclick="saveInvoiceRecord()">💾 Save Invoice</button>
+      <button class="btn btn-primary btn-sm" onclick="emailInvoiceToPrasanna()" style="background:#1a7a3c;">📧 Email to Prasanna</button>
     </div>
   </div>
 
@@ -538,6 +541,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
             <button class="btn btn-ghost btn-sm" onclick="toggleEdit('inf-edit-panel','inf-edit-btn')" id="inf-edit-btn">✏️ Edit</button>
             <button class="btn btn-ghost btn-sm" onclick="downloadPDFById('inf-paper')">📄 Export PDF</button>
             <button class="btn btn-inf btn-sm" onclick="saveInvoiceRecord()">💾 Save to Records</button>
+            <button class="btn btn-sm" onclick="emailInvoiceToPrasanna('inf-paper')" style="background:#1a7a3c;color:white;">📧 Email to Prasanna</button>
           </div>
         </div>
         <div class="invoice-paper" id="inf-paper"></div>
@@ -640,6 +644,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
             <button class="btn btn-ghost btn-sm" onclick="toggleEdit('syn-edit-panel','syn-edit-btn')" id="syn-edit-btn">✏️ Edit</button>
             <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Export PDF</button>
             <button class="btn btn-syn btn-sm" onclick="saveInvoiceRecord()">💾 Save to Records</button>
+            <button class="btn btn-sm" onclick="emailInvoiceToPrasanna('syn-paper')" style="background:#1a7a3c;color:white;">📧 Email to Prasanna</button>
           </div>
         </div>
         <div class="invoice-paper" id="syn-paper"></div>
@@ -733,6 +738,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
             <button class="btn btn-ghost btn-sm" onclick="toggleEdit('ico-edit-panel','ico-edit-btn')" id="ico-edit-btn">✏️ Edit</button>
             <button class="btn btn-ghost btn-sm" onclick="downloadPDF()">📄 Export PDF</button>
             <button class="btn btn-ico btn-sm" onclick="saveInvoiceRecord()">💾 Save to Records</button>
+            <button class="btn btn-sm" onclick="emailInvoiceToPrasanna('ico-paper')" style="background:#1a7a3c;color:white;">📧 Email to Prasanna</button>
           </div>
         </div>
         <div class="invoice-paper" id="ico-paper"></div>
@@ -1095,6 +1101,107 @@ function saveInvoiceRecord() {
   localStorage.setItem('xtm_records', JSON.stringify(records));
   updateDashboard();
   toast('💾 Invoice saved to records!');
+}
+
+// ══════════════════════════════════════════
+// EMAIL TO PRASANNA
+// ══════════════════════════════════════════
+async function emailInvoiceToPrasanna(paperId) {
+  // Find the active invoice paper element
+  let paperEl = null;
+  if (paperId) {
+    paperEl = document.getElementById(paperId);
+  } else {
+    const paperIds = ['inf-paper','syn-paper','ico-paper','rec-paper','benj-paper'];
+    for (const id of paperIds) {
+      const el = document.getElementById(id);
+      const preview = document.getElementById(id.replace('-paper','-preview'));
+      if (el && el.innerHTML.trim() && preview && preview.style.display === 'block') {
+        paperEl = el; break;
+      }
+    }
+    if (!paperEl) {
+      for (const id of paperIds) {
+        const el = document.getElementById(id);
+        if (el && el.innerHTML.trim()) { paperEl = el; break; }
+      }
+    }
+  }
+
+  if (!paperEl || !paperEl.innerHTML.trim()) {
+    toast('⚠️ Generate an invoice first');
+    return;
+  }
+  if (!currentInvoice) {
+    toast('⚠️ Generate an invoice first');
+    return;
+  }
+
+  toast('⏳ Preparing invoice PDF...');
+
+  try {
+    // Render the invoice element to canvas
+    const canvas = await html2canvas(paperEl, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    // Convert canvas to PDF using jsPDF
+    const { jsPDF } = window.jspdf;
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgH = (canvas.height * pageW) / canvas.width;
+    let yOffset = 0;
+    let remaining = imgH;
+    while (remaining > 0) {
+      pdf.addImage(imgData, 'JPEG', 0, -yOffset, pageW, imgH);
+      remaining -= pageH;
+      if (remaining > 0) { pdf.addPage(); yOffset += pageH; }
+    }
+
+    // Get PDF as base64
+    const pdfBase64 = pdf.output('datauristring').split(',')[1];
+
+    toast('⏳ Sending email via Gmail...');
+
+    // ── Send via Google Apps Script Web App ──
+    // Replace the URL below with your deployed Apps Script Web App URL
+    const APPS_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+
+    if (APPS_SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_URL_HERE') {
+      toast('⚠️ Set up Apps Script URL first — see SETUP GUIDE');
+      return;
+    }
+
+    const { invno, client, period, amount, date } = currentInvoice;
+    const amountFormatted = typeof amount === 'number'
+      ? '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2 })
+      : String(amount);
+
+    const payload = { invno, client, period, date, amount: amountFormatted, pdfBase64 };
+
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      toast('✅ Invoice emailed to Prasanna successfully!');
+    } else {
+      console.error('Email error from Apps Script:', result);
+      toast('❌ Failed to send: ' + (result.error || 'Unknown error'));
+    }
+  } catch(err) {
+    console.error('Email error:', err);
+    toast('❌ Error sending email: ' + err.message);
+  }
 }
 
 function renderHistory() {
