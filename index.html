@@ -504,6 +504,27 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
     </div>
     <div class="file-chip" id="inf-chip"><span>📁</span><span id="inf-chip-name">—</span><span id="inf-chip-count" style="color:var(--muted);">—</span></div>
 
+    <div id="inf-attendance-wrap" style="display:none;margin-top:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="section-hdr" style="margin:0;">Attendance Summary</div>
+        <button class="btn btn-ghost btn-sm" onclick="infDownloadExcel()" style="display:flex;align-items:center;gap:6px;">📥 Download Excel</button>
+      </div>
+      <div class="edit-tabs" id="inf-att-tabs" style="margin-bottom:0;border-bottom:none;"></div>
+      <div id="inf-att-pane" style="background:white;border:1px solid var(--rule);border-radius:0 4px 4px 4px;overflow:auto;max-height:320px;">
+        <table class="inv-history" style="margin:0;" id="inf-att-table">
+          <thead><tr>
+            <th>Employee Name</th><th>Collab</th><th>Role</th>
+            <th style="text-align:right;">Present</th>
+            <th style="text-align:right;">Absent</th>
+            <th style="text-align:right;">Infibucks</th>
+            <th style="text-align:right;">Working Hrs</th>
+            <th style="text-align:right;">%</th>
+          </tr></thead>
+          <tbody id="inf-att-body"></tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="config-strip" id="inf-config">
       <div class="form-field"><label>Invoice #</label><input type="text" id="inf-invno" value="1066"/></div>
       <div class="form-field"><label>Date</label><input type="date" id="inf-date"/></div>
@@ -519,6 +540,20 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         <tbody id="inf-rates-body"></tbody>
       </table>
       <button class="add-row-btn" onclick="infAddRateRow()">＋ Add Role</button>
+
+      <div class="section-hdr" style="margin-top:20px;">Infibucks Days Used</div>
+      <table class="editor-table">
+        <thead><tr><th>Role</th><th>Members</th><th>Hours</th><th>Rate ($/hr)</th><th style="text-align:right;padding-right:14px;">Total</th><th style="width:5%"></th></tr></thead>
+        <tbody id="inf-infibucks-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="infAddInfibucksRow()">＋ Add Employee</button>
+
+      <div class="section-hdr" style="margin-top:20px;">Additional Line Items</div>
+      <table class="editor-table">
+        <thead><tr><th>Role / Description</th><th>Members</th><th>Hours</th><th>Rate ($/hr)</th><th style="text-align:right;padding-right:14px;">Total</th><th style="width:5%"></th></tr></thead>
+        <tbody id="inf-extras-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="infAddExtraRow()">＋ Add Item</button>
     </div>
 
     <div class="stat-row" id="inf-stats" style="display:none;">
@@ -1195,7 +1230,38 @@ async function emailInvoiceToPrasanna(paperId) {
     toast('⏳ Sending email...');
 
     // Use hidden form POST — no CORS issues, works with large payloads
-    const payload = JSON.stringify({ invno, client, period, date, amount: amountFormatted, pdfBase64 });
+    // Also generate Excel attachment if attendance data exists
+    let excelBase64 = null;
+    if (infAttendanceData && infAttendanceData.length > 0) {
+      try {
+        const wb = XLSX.utils.book_new();
+        const period2 = document.getElementById('inf-period').value || period;
+        const ROLE_TABS_EMAIL = [
+          { key:'operator', label:'AI Operator',  match: r => r.role.toLowerCase().includes('operator') },
+          { key:'tl',       label:'Team Leaders', match: r => r.role.toLowerCase().includes('leader') || r.role.toLowerCase().includes('tl') },
+          { key:'qa',       label:'QA Reviewer',  match: r => r.role.toLowerCase().includes('qa') || r.role.toLowerCase().includes('reviewer') },
+          { key:'pilot',    label:'AI Pilot',     match: r => r.role.toLowerCase().includes('pilot') || r.role.toLowerCase().includes('sr ops') },
+          { key:'all',      label:'All Employees',match: r => true },
+        ];
+        ROLE_TABS_EMAIL.forEach(tab => {
+          const rows = infAttendanceData.filter(tab.match);
+          if (!rows.length) return;
+          const wsData = [
+            ['Employee Name','Collab','Role','Present','Absent','Infibucks Days','Working Hours','Attendance %'],
+            ...rows.map(r => [r.name, r.collab, r.role, r.present, r.absent, r.ibDays||0, r.hours, r.pct.toFixed(1)+'%'])
+          ];
+          const ws = XLSX.utils.aoa_to_sheet(wsData);
+          ws['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:9},{wch:9},{wch:14},{wch:14},{wch:13}];
+          XLSX.utils.book_append_sheet(wb, ws, tab.label);
+        });
+        const excelBinary = XLSX.write(wb, { bookType:'xlsx', type:'base64' });
+        excelBase64 = excelBinary;
+      } catch(exErr) {
+        console.warn('Excel generation failed:', exErr);
+      }
+    }
+
+    const payload = JSON.stringify({ invno, client, period, date, amount: amountFormatted, pdfBase64, excelBase64 });
 
     const form = document.createElement('form');
     form.method = 'POST';
@@ -1318,16 +1384,38 @@ function infParseSheet(raw) {
   const cName = headers.findIndex(h=>h.includes('employee name'));
   const cRole = headers.findIndex(h=>h.includes('nature'));
   const cHrs = headers.findIndex(h=>h.includes('total working hr')&&!h.includes('including'));
+  const cInfibucks = headers.findIndex(h=>h.includes('infibuck'));
+  const cCollab   = headers.findIndex(h=>h.includes('collab'));
+  const cPresent  = headers.findIndex(h=>h.includes('present'));
+  const cAbsent   = headers.findIndex(h=>h.includes('absent'));
+  const cPct      = headers.findIndex(h=>h.includes('percentage'));
   infEmpData = [];
+  infInfibucksData = {};
+  infAttendanceData = [];
   for (let i=hr+1;i<raw.length;i++) {
     const row=raw[i]; if(!row||!row[cName]||typeof row[cName]!=='string') continue;
     const name=row[cName].toString().trim(); if(!name||name.length<2) continue;
     const rawRole=(row[cRole]||'').toString().toLowerCase().trim();
     const role=ROLE_MAP[rawRole]||rawRole||'AI Prompt Operator';
     const hrs=parseFloat(row[cHrs]||0)||0; if(hrs===0) continue;
+    const present = parseFloat(row[cPresent>=0?cPresent:5]||0)||0;
+    const absent  = parseFloat(row[cAbsent>=0?cAbsent:6]||0)||0;
+    const collab  = (row[cCollab>=0?cCollab:4]||'').toString().trim();
+    const pct     = parseFloat(row[cPct>=0?cPct:8]||0)||0;
     infEmpData.push({ name, role, hours:hrs });
+    infAttendanceData.push({ name, collab, role, present, absent, hours:hrs, pct });
+    const ibDays = parseFloat(row[cInfibucks]||0)||0;
+    if(ibDays > 0) {
+      const ibHours = ibDays * 8;
+      if(!infInfibucksData[role]) infInfibucksData[role] = { count:0, hours:0, rate: DEF_RATES[role]||5.85 };
+      infInfibucksData[role].count++;
+      infInfibucksData[role].hours += ibHours;
+    }
+    // Store ibDays in attendance
+    const attEntry = infAttendanceData.find(a => a.name === name);
+    if(attEntry) attEntry.ibDays = ibDays;
   }
-  infBuildGroups(); infShowEditor(); infUpdateSummary();
+  infBuildGroups(); infShowEditor(); infUpdateSummary(); infBuildInfibucksTable(); infBuildAttendance();
 }
 
 function infManual() {
@@ -1347,6 +1435,13 @@ function infBuildGroups() {
     if(!infRoleGroups[e.role]) infRoleGroups[e.role]={ count:0, totalHours:0, rate:DEF_RATES[e.role]||5.85 };
     infRoleGroups[e.role].count++;
     infRoleGroups[e.role].totalHours += e.hours;
+  });
+  // Subtract infibucks hours from regular billing
+  Object.entries(infInfibucksData).forEach(([role, ibData]) => {
+    if(infRoleGroups[role]) {
+      infRoleGroups[role].totalHours -= ibData.hours;
+      if(infRoleGroups[role].totalHours < 0) infRoleGroups[role].totalHours = 0;
+    }
   });
   infBuildRatesTable();
 }
@@ -1412,6 +1507,10 @@ function infShowEditor() {
   document.getElementById('inf-actions').style.display = 'flex';
   document.getElementById('inf-config').classList.add('show');
   infUpdateSummary();
+  // Init extras table if empty
+  if (!document.getElementById('inf-extras-body').children.length) {
+    infAddExtraRow();
+  }
 }
 
 function infGenerate() {
@@ -1447,7 +1546,12 @@ function infRender() {
   const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const fmtDate = d => { if(!d||!d.includes('-')) return d; const [y,m,dd]=d.split('-'); return `${m}/${dd}/${y}`; };
 
-  currentInvoice = { client:'Infinitus', invno, period, amount:subtotal, date:fmtDate(dateRaw) };
+  const infibucksRows = infGetInfibucks();
+  const extrasRows = infGetExtras();
+  const infibucksTotal = infibucksRows.reduce((s,e)=>s+e.total,0);
+  const extrasTotal = extrasRows.reduce((s,e)=>s+(e.amt||0),0);
+  const grandTotal = subtotal + infibucksTotal + extrasTotal;
+  currentInvoice = { client:'Infinitus', invno, period, amount:grandTotal, date:fmtDate(dateRaw) };
 
   const linesHTML = lines.map(l=>`<tr>
     <td>${l.role}</td>
@@ -1479,27 +1583,217 @@ function infRender() {
         <tbody>${linesHTML}</tbody>
       </table>
       <div class="inv-totals">
-        <div class="inv-total-row"><span>Subtotal</span><span style="font-family:'DM Mono',monospace;">$${fmt(subtotal)}</span></div>
-        <div class="inv-total-row grand"><span>Balance Due</span><span style="font-family:'DM Mono',monospace;color:#1a3fa3;">$${fmt(subtotal)}</span></div>
+        <div class="inv-total-row"><span>Services Subtotal</span><span style="font-family:'DM Mono',monospace;">$${fmt(subtotal)}</span></div>
       </div>
-      <div class="inv-bank">
-        <div class="inv-bank-title">Bank Details</div>
-        <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
-        <div class="inv-bank-row"><span class="k">Bank</span><span class="v">${bank}</span></div>
-        <div class="inv-bank-row"><span class="k">Account No</span><span class="v">${acct}</span></div>
-        <div class="inv-bank-row"><span class="k">IFSC</span><span class="v">${ifsc}</span></div>
-        <div class="inv-bank-row"><span class="k">Account Type</span><span class="v">Current</span></div>
-        <div class="inv-bank-row"><span class="k">MICR</span><span class="v">560229115</span></div>
-        <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">${swift}</span></div>
-        <div class="inv-bank-row"><span class="k">Branch</span><span class="v">${branch}</span></div>
+      ${infibucksRows.length > 0 ? `
+      <div style="margin-top:16px;margin-bottom:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--rule);">Infibucks Days Utilised</div>
+        <table class="inv-tbl" style="margin-bottom:0;">
+          <thead><tr><th>Designation</th><th class="r"># Members</th><th class="r">Hours</th><th class="r">Rate</th><th class="r">Total</th></tr></thead>
+          <tbody>${infibucksRows.map(e=>'<tr><td>'+e.role+'</td><td class="mono r">'+String(e.count).padStart(3,'0')+'</td><td class="mono r">'+e.hours.toLocaleString()+'</td><td class="mono r">$'+e.rate.toFixed(2)+'</td><td class="bold r">$'+fmt(e.total)+'</td></tr>').join('')}</tbody>
+          <tfoot><tr style="background:#f0f4f9;"><td colspan="4" style="padding:8px 14px;font-weight:600;text-align:right;">Infibucks Total</td><td class="mono r" style="padding:8px 14px;font-weight:700;">$${fmt(infibucksTotal)}</td></tr></tfoot>
+        </table>
+      </div>` : ''}
+      ${extrasRows.length > 0 ? `
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--rule);">Additional Line Items</div>
+        <table class="inv-tbl" style="margin-bottom:0;">
+          <thead><tr><th>Role / Description</th><th class="r"># Members</th><th class="r">Hours</th><th class="r">Rate</th><th class="r">Total</th></tr></thead>
+          <tbody>${extrasRows.map(e=>'<tr><td>'+e.desc+'</td><td class="mono r">'+String(e.count).padStart(3,'0')+'</td><td class="mono r">'+e.hours.toLocaleString()+'</td><td class="mono r">$'+e.rate.toFixed(2)+'</td><td class="bold r">$'+fmt(e.amt)+'</td></tr>').join('')}</tbody>
+          <tfoot><tr style="background:#f0f4f9;"><td colspan="4" style="padding:8px 14px;font-weight:600;text-align:right;">Additional Total</td><td class="mono r" style="padding:8px 14px;font-weight:700;">$${fmt(extrasTotal)}</td></tr></tfoot>
+        </table>
+      </div>` : ''}
+      <div class="inv-totals" style="margin-top:0;">
+        <div class="inv-total-row grand"><span>Balance Due</span><span style="font-family:'DM Mono',monospace;color:#1a3fa3;">$${fmt(grandTotal)}</span></div>
       </div>
-      <div class="inv-note"><strong>Note:</strong> ${note}</div>
     </div>
     <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>${email}</span></div>`;
 }
 
+
+
+// ══════════════════════════════════════════
+// ATTENDANCE SUMMARY & EXCEL EXPORT
+// ══════════════════════════════════════════
+const ROLE_TABS = [
+  { key:'operator', label:'AI Operator',   match: r => r.role.toLowerCase().includes('operator') },
+  { key:'tl',       label:"Team Leaders",  match: r => r.role.toLowerCase().includes('leader') || r.role.toLowerCase().includes('tl') },
+  { key:'qa',       label:'QA Reviewer',   match: r => r.role.toLowerCase().includes('qa') || r.role.toLowerCase().includes('reviewer') },
+  { key:'pilot',    label:'AI Pilot',      match: r => r.role.toLowerCase().includes('pilot') || r.role.toLowerCase().includes('sr ops') },
+  { key:'all',      label:'All',           match: r => true },
+];
+
+let infActiveTab = 'operator';
+
+function infBuildAttendance() {
+  const wrap = document.getElementById('inf-attendance-wrap');
+  if (!infAttendanceData.length) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+
+  // Build tabs — only show tabs that have data
+  const tabsEl = document.getElementById('inf-att-tabs');
+  tabsEl.innerHTML = '';
+  ROLE_TABS.forEach(tab => {
+    const count = infAttendanceData.filter(tab.match).length;
+    if (count === 0 && tab.key !== 'all') return;
+    const btn = document.createElement('button');
+    btn.className = 'edit-tab' + (tab.key === infActiveTab ? ' active' : '');
+    btn.textContent = tab.label + ' (' + count + ')';
+    btn.onclick = () => {
+      infActiveTab = tab.key;
+      tabsEl.querySelectorAll('.edit-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      infRenderAttTable();
+    };
+    tabsEl.appendChild(btn);
+  });
+
+  // Set first available tab as active
+  const firstBtn = tabsEl.querySelector('.edit-tab');
+  if (firstBtn) {
+    infActiveTab = ROLE_TABS.find(t => infAttendanceData.filter(t.match).length > 0)?.key || 'all';
+    tabsEl.querySelectorAll('.edit-tab').forEach(b => {
+      b.classList.toggle('active', b.textContent.startsWith(ROLE_TABS.find(t=>t.key===infActiveTab)?.label));
+    });
+  }
+
+  infRenderAttTable();
+}
+
+function infRenderAttTable() {
+  const tab = ROLE_TABS.find(t => t.key === infActiveTab) || ROLE_TABS[ROLE_TABS.length-1];
+  const rows = infAttendanceData.filter(tab.match);
+  const tbody = document.getElementById('inf-att-body');
+  tbody.innerHTML = rows.map((r,i) => `<tr>
+    <td style="font-size:12px;">${r.name}</td>
+    <td style="font-size:12px;color:var(--muted);">${r.collab}</td>
+    <td style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">${r.role}</td>
+    <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:#1a7a3c;">${r.present}</td>
+    <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:#c0392b;">${r.absent}</td>
+    <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:#e67e22;">${infAttendanceData.find(a=>a.name===r.name)?.ibDays||0}</td>
+    <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;">${r.hours}</td>
+    <td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">${r.pct.toFixed(1)}%</td>
+  </tr>`).join('');
+}
+
+function infDownloadExcel() {
+  if (!infAttendanceData.length) { toast('⚠️ Upload a timesheet first'); return; }
+  const period = document.getElementById('inf-period').value || 'Period';
+
+  // Build workbook with one sheet per role tab
+  const wb = XLSX.utils.book_new();
+
+  ROLE_TABS.forEach(tab => {
+    const rows = infAttendanceData.filter(tab.match);
+    if (!rows.length) return;
+    const wsData = [
+      ['Employee Name','Collab','Role','Present','Absent','Infibucks Days','Working Hours','Attendance %'],
+      ...rows.map(r => [r.name, r.collab, r.role, r.present, r.absent, r.ibDays||0, r.hours, r.pct.toFixed(1)+'%'])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    // Set column widths
+    ws['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:9},{wch:9},{wch:14},{wch:14},{wch:13}];
+    XLSX.utils.book_append_sheet(wb, ws, tab.label);
+  });
+
+  XLSX.writeFile(wb, 'Infinitus_Attendance_' + period.replace(/\s+/g,'_') + '.xlsx');
+  toast('✅ Excel downloaded!');
+}
+
+// ── INFIBUCKS TABLE ──
+function infBuildInfibucksTable() {
+  const tbody = document.getElementById('inf-infibucks-body');
+  tbody.innerHTML = '';
+  Object.entries(infInfibucksData).forEach(([role, data]) => {
+    infAddInfibucksRowEl({ role, count: data.count, hours: data.hours, rate: data.rate });
+  });
+}
+
+function infAddInfibucksRowEl(e) {
+  const tbody = document.getElementById('inf-infibucks-body');
+  const total = (e.hours||0) * (e.rate||5.85);
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="${e.role||''}" oninput="infUpdateSummary()" placeholder="Role"/></td>
+    <td><input type="number" value="${e.count||0}" style="width:65px;" oninput="infRecalcIBRow(this)"/></td>
+    <td><input type="number" value="${e.hours||0}" step="0.5" style="width:75px;" oninput="infRecalcIBRow(this)"/></td>
+    <td><input type="number" value="${(e.rate||5.85).toFixed(2)}" step="0.01" style="width:70px;" oninput="infRecalcIBRow(this)"/></td>
+    <td class="amt">$${total.toFixed(2)}</td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();infUpdateSummary()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function infRecalcIBRow(inp) {
+  const row = inp.closest('tr'), inputs = row.querySelectorAll('input');
+  const hours = parseFloat(inputs[2].value)||0;
+  const rate  = parseFloat(inputs[3].value)||0;
+  row.querySelector('.amt').textContent = '$' + (hours * rate).toFixed(2);
+  infUpdateSummary();
+}
+
+function infRecalcIBRow(inp) {
+  const row = inp.closest('tr'), inputs = row.querySelectorAll('input');
+  const days = parseFloat(inputs[2].value)||0;
+  const rate = parseFloat(inputs[4].value)||0;
+  const hours = days * 8;
+  inputs[3].value = hours;
+  row.querySelector('.amt').textContent = '$' + (hours * rate).toFixed(2);
+  infUpdateSummary();
+}
+
+function infAddInfibucksRow() {
+  infAddInfibucksRowEl({ role:'', count:0, hours:0, rate:5.85 });
+}
+
+function infGetInfibucks() {
+  return Array.from(document.querySelectorAll('#inf-infibucks-body tr')).map(row => {
+    const inputs = row.querySelectorAll('input');
+    const count = parseInt(inputs[1].value)||0;
+    const hours = parseFloat(inputs[2].value)||0;
+    const rate  = parseFloat(inputs[3].value)||0;
+    return { role:inputs[0].value, count, hours, rate, total:hours*rate };
+  }).filter(e => e.role.trim() || e.hours > 0);
+}
+
+// ── EXTRAS TABLE ──
+function infAddExtraRow(desc='', count=0, hours=0, rate=0) {
+  const tbody = document.getElementById('inf-extras-body');
+  const total = hours * rate;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="${desc}" placeholder="Role / Description" oninput="infUpdateSummary()"/></td>
+    <td><input type="number" value="${count}" style="width:65px;" oninput="infRecalcExtraRow(this)"/></td>
+    <td><input type="number" value="${hours}" step="0.5" style="width:70px;" oninput="infRecalcExtraRow(this)"/></td>
+    <td><input type="number" value="${rate}" step="0.01" style="width:70px;" oninput="infRecalcExtraRow(this)"/></td>
+    <td class="amt">$${total.toFixed(2)}</td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove();infUpdateSummary()">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function infRecalcExtraRow(inp) {
+  const row = inp.closest('tr'), inputs = row.querySelectorAll('input');
+  const hours = parseFloat(inputs[2].value)||0;
+  const rate  = parseFloat(inputs[3].value)||0;
+  row.querySelector('.amt').textContent = '$' + (hours * rate).toFixed(2);
+  infUpdateSummary();
+}
+
+function infGetExtras() {
+  return Array.from(document.querySelectorAll('#inf-extras-body tr')).map(row => {
+    const inputs = row.querySelectorAll('input');
+    const hours = parseFloat(inputs[2].value)||0;
+    const rate  = parseFloat(inputs[3].value)||0;
+    const amt   = hours * rate;
+    return { desc:inputs[0].value, count:parseInt(inputs[1].value)||0, hours, rate, amt };
+  }).filter(e => e.desc.trim() || e.amt > 0);
+}
+
 function infReset() {
-  infEmpData=[]; infRoleGroups={};
+  infEmpData=[]; infRoleGroups={}; infInfibucksData={}; infAttendanceData=[];
+  document.getElementById('inf-infibucks-body').innerHTML='';
+  document.getElementById('inf-att-body').innerHTML='';
+  document.getElementById('inf-attendance-wrap').style.display='none';
+  document.getElementById('inf-extras-body').innerHTML='';
   document.getElementById('inf-editor-wrap').style.display='none';
   document.getElementById('inf-stats').style.display='none';
   document.getElementById('inf-actions').style.display='none';
