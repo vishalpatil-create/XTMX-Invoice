@@ -338,8 +338,6 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 </head>
 <body>
 
-<!-- SIDEBAR -->
-
 <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
 <div id="login-screen">
   <div class="login-card">
@@ -396,8 +394,9 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
     <div class="nav-item" onclick="showView('recepto', this)">
       <span class="dot" style="background:white;opacity:0.7;"></span> Quick Response Tech
     </div>
+    <!-- CHANGED: Benj Poll → Quantivx Pvt Ltd -->
     <div class="nav-item" onclick="showView('benjpoll', this)">
-      <span class="dot" style="background:white;opacity:0.7;"></span> Benj Poll
+      <span class="dot" style="background:white;opacity:0.7;"></span> Quantivx Pvt Ltd
     </div>
   </div>
 
@@ -466,7 +465,8 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
           <button class="btn btn-ico" onclick="showView('icon', document.querySelector('.nav-item:nth-child(4)'))">+ New ICON Invoice</button>
           <div style="border-top:1px solid var(--rule);margin:4px 0;"></div>
           <button class="btn" style="background:#e67e22;color:white;" onclick="showView('recepto', document.querySelector('[onclick*=recepto]'))">🏢 Quick Response Tech — Rent</button>
-          <button class="btn" style="background:#2980b9;color:white;" onclick="showView('benjpoll', document.querySelector('[onclick*=benjpoll]'))">🏠 Benj Poll — Rent</button>
+          <!-- CHANGED: Benj Poll → Quantivx -->
+          <button class="btn" style="background:#2980b9;color:white;" onclick="showView('benjpoll', document.querySelector('[onclick*=benjpoll]'))">🏠 Quantivx — Rent</button>
           <div style="border-top:1px solid var(--rule);margin:4px 0;"></div>
           <button class="btn btn-ghost" onclick="showView('history', document.querySelector('.nav-item:nth-child(5)'))">📋 View Invoice History</button>
         </div>
@@ -518,7 +518,6 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
             <th style="text-align:right;">Absent</th>
             <th style="text-align:right;">Infibucks</th>
             <th style="text-align:right;">Working Hrs</th>
-            
           </tr></thead>
           <tbody id="inf-att-body"></tbody>
         </table>
@@ -885,12 +884,13 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
     </div>
   </div>
 
-  <!-- ═══════════════════ BENJ POLL (RENT) ═══════════════════ -->
+  <!-- ═══════════════════ QUANTIVX PRIVATE LTD (RENT) ═══════════════════ -->
+  <!-- CHANGED: Was "Benj Poll" — now Qunativx Private Ltd. with full company details -->
   <div class="view" id="view-benjpoll">
     <div class="client-header" style="border-left-color:#2980b9;">
       <div>
-        <div class="client-header-name">Benj Poll</div>
-        <div class="client-header-meta">Rent Invoice · INR</div>
+        <div class="client-header-name">Qunativx Private Ltd.</div>
+        <div class="client-header-meta">M06, Harsha Greenwoods, 5th Main Road, Malleshpalya, Bengaluru 560075 · GSTIN: 29AABCQ2492E1ZD · Rent Invoice · INR</div>
       </div>
     </div>
 
@@ -974,7 +974,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 // GLOBAL STATE
 // ══════════════════════════════════════════
 let records = JSON.parse(localStorage.getItem('xtm_records') || '[]');
-let currentInvoice = null; // which client's invoice is active for save/export
+let currentInvoice = null;
 
 const ROLE_MAP = {
   'ai propmpt tl':'AI Team Leader','ai prompt tl':'AI Team Leader','ai team leader':'AI Team Leader',
@@ -984,11 +984,9 @@ const ROLE_MAP = {
 };
 const DEF_RATES = { 'AI Prompt Operator':5.85,'AI Team Leader':6.30,'QA Reviewer':6.10,'Sr Ops (AI Pilot Operator)':6.20 };
 
-let infEmpData = [], infRoleGroups = {};
+let infEmpData = [], infRoleGroups = {}, infInfibucksData = {}, infAttendanceData = [];
 let synEmpData = [];
 let icoSowData = [];
-
-// init dates
 
 // ══════════════════════════════════════════
 // AUTH
@@ -1053,7 +1051,8 @@ function showView(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + id).classList.add('active');
   if (el) el.classList.add('active');
-  const titles = { dashboard:'Dashboard', infinitus:'Infinitus Systems', synaptic:'Synaptic Advisory', icon:'ICON Agility', recepto:'Quick Response Technologies', benjpoll:'Benj Poll', history:'Invoice History' };
+  // CHANGED: benjpoll title updated to Quantivx Pvt Ltd
+  const titles = { dashboard:'Dashboard', infinitus:'Infinitus Systems', synaptic:'Synaptic Advisory', icon:'ICON Agility', recepto:'Quick Response Technologies', benjpoll:'Quantivx Pvt Ltd', history:'Invoice History' };
   const subs = { dashboard:'Revenue Overview', infinitus:'Flex Team Billing', synaptic:'Individual Employee Billing', icon:'SOW Consulting · USD', recepto:'Rent Invoice · INR', benjpoll:'Rent Invoice · INR', history:'All Saved Invoices' };
   document.getElementById('topbarTitle').innerHTML = `${titles[id]} <span>${subs[id]}</span>`;
   if (id === 'dashboard') updateDashboard();
@@ -1104,7 +1103,6 @@ function updateDashboard() {
     if(el) el.textContent = records.filter(r=>r.client===['Infinitus','Synaptic','ICON'][i]).length;
   });
 
-  // Bar chart
   const max = Math.max(infTotal, synTotal, icoTotal, 1);
   document.getElementById('revenueChart').innerHTML = grand === 0
     ? '<div style="color:var(--muted);font-size:13px;">Raise invoices to see revenue chart</div>'
@@ -1114,7 +1112,6 @@ function updateDashboard() {
         <div class="bar-track"><div class="bar-fill ${cls}" style="width:${Math.round(val/max*100)}%">${fmt(val)}</div></div>
       </div>`).join('');
 
-  // Recent invoices
   const recent = [...records].reverse().slice(0,6);
   const clientColors = { Infinitus:'var(--c-infinitus)', Synaptic:'var(--c-synaptic)', ICON:'var(--c-icon)' };
   document.getElementById('recentInvBody').innerHTML = recent.length === 0
@@ -1145,7 +1142,6 @@ function saveInvoiceRecord() {
 // EMAIL TO PRASANNA
 // ══════════════════════════════════════════
 async function emailInvoiceToPrasanna(paperId) {
-  // Find the active invoice paper element
   let paperEl = null;
   if (paperId) {
     paperEl = document.getElementById(paperId);
@@ -1166,31 +1162,20 @@ async function emailInvoiceToPrasanna(paperId) {
     }
   }
 
-  if (!paperEl || !paperEl.innerHTML.trim()) {
-    toast('⚠️ Generate an invoice first');
-    return;
-  }
-  if (!currentInvoice) {
-    toast('⚠️ Generate an invoice first');
-    return;
-  }
+  if (!paperEl || !paperEl.innerHTML.trim()) { toast('⚠️ Generate an invoice first'); return; }
+  if (!currentInvoice) { toast('⚠️ Generate an invoice first'); return; }
 
   toast('⏳ Sending invoice to Prasanna...');
 
   try {
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-1-JxZ9WM_0Q2m_-tzOEzNnk6AuVTYeytybHu2jxU1m8YquQvj-j50sRN2Ze6A5A/exec';
-
     const { invno, client, period, amount, date } = currentInvoice;
     const amountFormatted = typeof amount === 'number'
       ? '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2 })
       : String(amount);
 
-    // Generate PDF in browser and send as base64
     toast('⏳ Generating PDF...');
-
     const { jsPDF } = window.jspdf;
-
-    // Clone invoice into hidden full-width div for rendering
     const clone = document.createElement('div');
     clone.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:-1;';
     clone.innerHTML = paperEl.outerHTML;
@@ -1198,22 +1183,10 @@ async function emailInvoiceToPrasanna(paperId) {
     clone.firstElementChild.style.boxShadow = 'none';
     clone.firstElementChild.style.border = 'none';
     document.body.appendChild(clone);
-
     await new Promise(r => setTimeout(r, 400));
-
-    const canvas = await html2canvas(clone, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: 794,
-      height: clone.scrollHeight,
-      windowWidth: 794
-    });
-
+    const canvas = await html2canvas(clone, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false, width:794, height:clone.scrollHeight, windowWidth:794 });
     document.body.removeChild(clone);
-
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
     const pageW = pdf.internal.pageSize.getWidth();
     const pageH = pdf.internal.pageSize.getHeight();
     const imgData = canvas.toDataURL('image/jpeg', 0.92);
@@ -1224,13 +1197,9 @@ async function emailInvoiceToPrasanna(paperId) {
       remaining -= pageH;
       if (remaining > 0) { pdf.addPage(); yPos += pageH; }
     }
-
     const pdfBase64 = pdf.output('datauristring').split(',')[1];
-
     toast('⏳ Sending email...');
 
-    // Use hidden form POST — no CORS issues, works with large payloads
-    // Also generate Excel attachment if attendance data exists
     let excelBase64 = null;
     if (infAttendanceData && infAttendanceData.length > 0) {
       try {
@@ -1254,56 +1223,36 @@ async function emailInvoiceToPrasanna(paperId) {
           ws['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:9},{wch:9},{wch:14},{wch:14}];
           XLSX.utils.book_append_sheet(wb, ws, tab.label);
         });
-        // Infibucks tab
         const ibRows = infAttendanceData.filter(r => (r.ibDays||0) > 0);
         if (ibRows.length > 0) {
           const ibData = [
             ['Employee Name','Collab','Role','Infibucks Days','Hours','Rate ($/hr)','Amount ($)'],
             ...ibRows.map(r => {
-              const role = r.role;
-              const rate = DEF_RATES[role]||5.85;
+              const rate = DEF_RATES[r.role]||5.85;
               const hours = (r.ibDays||0) * 8;
-              return [r.name, r.collab, role, r.ibDays||0, hours, rate, (hours*rate).toFixed(2)];
+              return [r.name, r.collab, r.role, r.ibDays||0, hours, rate, (hours*rate).toFixed(2)];
             })
           ];
           const ibWs = XLSX.utils.aoa_to_sheet(ibData);
           ibWs['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:14},{wch:10},{wch:13},{wch:13}];
           XLSX.utils.book_append_sheet(wb, ibWs, 'Infibucks');
         }
-        const excelBinary = XLSX.write(wb, { bookType:'xlsx', type:'base64' });
-        excelBase64 = excelBinary;
-      } catch(exErr) {
-        console.warn('Excel generation failed:', exErr);
-      }
+        excelBase64 = XLSX.write(wb, { bookType:'xlsx', type:'base64' });
+      } catch(exErr) { console.warn('Excel generation failed:', exErr); }
     }
 
     const payload = JSON.stringify({ invno, client, period, date, amount: amountFormatted, pdfBase64, excelBase64 });
-
     const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = APPS_SCRIPT_URL;
-    form.target = 'hidden_iframe';
-    form.style.display = 'none';
-
+    form.method = 'POST'; form.action = APPS_SCRIPT_URL; form.target = 'hidden_iframe'; form.style.display = 'none';
     const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'payload';
-    input.value = payload;
+    input.type = 'hidden'; input.name = 'payload'; input.value = payload;
     form.appendChild(input);
-
     const iframe = document.createElement('iframe');
-    iframe.name = 'hidden_iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-    document.body.appendChild(form);
-
+    iframe.name = 'hidden_iframe'; iframe.style.display = 'none';
+    document.body.appendChild(iframe); document.body.appendChild(form);
     form.submit();
-
     await new Promise(r => setTimeout(r, 2000));
-
-    document.body.removeChild(form);
-    document.body.removeChild(iframe);
-
+    document.body.removeChild(form); document.body.removeChild(iframe);
     toast('✅ Invoice emailed to Prasanna!');
   } catch(err) {
     console.error('Email error:', err);
@@ -1405,9 +1354,7 @@ function infParseSheet(raw) {
   const cPresent  = headers.findIndex(h=>h.includes('present'));
   const cAbsent   = headers.findIndex(h=>h.includes('absent'));
   const cPct      = headers.findIndex(h=>h.includes('percentage'));
-  infEmpData = [];
-  infInfibucksData = {};
-  infAttendanceData = [];
+  infEmpData = []; infInfibucksData = {}; infAttendanceData = [];
   for (let i=hr+1;i<raw.length;i++) {
     const row=raw[i]; if(!row||!row[cName]||typeof row[cName]!=='string') continue;
     const name=row[cName].toString().trim(); if(!name||name.length<2) continue;
@@ -1427,7 +1374,6 @@ function infParseSheet(raw) {
       infInfibucksData[role].count++;
       infInfibucksData[role].hours += ibHours;
     }
-    // Store ibDays in attendance
     const attEntry = infAttendanceData.find(a => a.name === name);
     if(attEntry) attEntry.ibDays = ibDays;
   }
@@ -1452,7 +1398,6 @@ function infBuildGroups() {
     infRoleGroups[e.role].count++;
     infRoleGroups[e.role].totalHours += e.hours;
   });
-  // Subtract infibucks hours from regular billing
   Object.entries(infInfibucksData).forEach(([role, ibData]) => {
     if(infRoleGroups[role]) {
       infRoleGroups[role].totalHours -= ibData.hours;
@@ -1523,10 +1468,7 @@ function infShowEditor() {
   document.getElementById('inf-actions').style.display = 'flex';
   document.getElementById('inf-config').classList.add('show');
   infUpdateSummary();
-  // Init extras table if empty
-  if (!document.getElementById('inf-extras-body').children.length) {
-    infAddExtraRow();
-  }
+  if (!document.getElementById('inf-extras-body').children.length) { infAddExtraRow(); }
 }
 
 function infGenerate() {
@@ -1626,8 +1568,6 @@ function infRender() {
     <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>${email}</span></div>`;
 }
 
-
-
 // ══════════════════════════════════════════
 // ATTENDANCE SUMMARY & EXCEL EXPORT
 // ══════════════════════════════════════════
@@ -1638,15 +1578,12 @@ const ROLE_TABS = [
   { key:'pilot',    label:'AI Pilot',      match: r => r.role.toLowerCase().includes('pilot') || r.role.toLowerCase().includes('sr ops') },
   { key:'all',      label:'All',           match: r => true },
 ];
-
 let infActiveTab = 'operator';
 
 function infBuildAttendance() {
   const wrap = document.getElementById('inf-attendance-wrap');
   if (!infAttendanceData.length) { wrap.style.display='none'; return; }
   wrap.style.display = 'block';
-
-  // Build tabs — only show tabs that have data
   const tabsEl = document.getElementById('inf-att-tabs');
   tabsEl.innerHTML = '';
   ROLE_TABS.forEach(tab => {
@@ -1663,8 +1600,6 @@ function infBuildAttendance() {
     };
     tabsEl.appendChild(btn);
   });
-
-  // Set first available tab as active
   const firstBtn = tabsEl.querySelector('.edit-tab');
   if (firstBtn) {
     infActiveTab = ROLE_TABS.find(t => infAttendanceData.filter(t.match).length > 0)?.key || 'all';
@@ -1672,7 +1607,6 @@ function infBuildAttendance() {
       b.classList.toggle('active', b.textContent.startsWith(ROLE_TABS.find(t=>t.key===infActiveTab)?.label));
     });
   }
-
   infRenderAttTable();
 }
 
@@ -1688,17 +1622,13 @@ function infRenderAttTable() {
     <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:#c0392b;">${r.absent}</td>
     <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:#e67e22;">${infAttendanceData.find(a=>a.name===r.name)?.ibDays||0}</td>
     <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;">${r.hours}</td>
-
   </tr>`).join('');
 }
 
 function infDownloadExcel() {
   if (!infAttendanceData.length) { toast('⚠️ Upload a timesheet first'); return; }
   const period = document.getElementById('inf-period').value || 'Period';
-
-  // Build workbook with one sheet per role tab
   const wb = XLSX.utils.book_new();
-
   ROLE_TABS.forEach(tab => {
     const rows = infAttendanceData.filter(tab.match);
     if (!rows.length) return;
@@ -1710,7 +1640,6 @@ function infDownloadExcel() {
     ws['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:9},{wch:9},{wch:14},{wch:14}];
     XLSX.utils.book_append_sheet(wb, ws, tab.label);
   });
-  // Infibucks tab
   const ibRowsDl = infAttendanceData.filter(r => (r.ibDays||0) > 0);
   if (ibRowsDl.length > 0) {
     const ibDataDl = [
@@ -1725,12 +1654,10 @@ function infDownloadExcel() {
     ibWsDl['!cols'] = [{wch:28},{wch:12},{wch:22},{wch:14},{wch:10},{wch:13},{wch:13}];
     XLSX.utils.book_append_sheet(wb, ibWsDl, 'Infibucks');
   }
-
   XLSX.writeFile(wb, 'Infinitus_Attendance_' + period.replace(/\s+/g,'_') + '.xlsx');
   toast('✅ Excel downloaded!');
 }
 
-// ── INFIBUCKS TABLE ──
 function infBuildInfibucksTable() {
   const tbody = document.getElementById('inf-infibucks-body');
   tbody.innerHTML = '';
@@ -1755,25 +1682,15 @@ function infAddInfibucksRowEl(e) {
 
 function infRecalcIBRow(inp) {
   const row = inp.closest('tr'), inputs = row.querySelectorAll('input');
-  const hours = parseFloat(inputs[2].value)||0;
-  const rate  = parseFloat(inputs[3].value)||0;
-  row.querySelector('.amt').textContent = '$' + (hours * rate).toFixed(2);
-  infUpdateSummary();
-}
-
-function infRecalcIBRow(inp) {
-  const row = inp.closest('tr'), inputs = row.querySelectorAll('input');
   const days = parseFloat(inputs[2].value)||0;
-  const rate = parseFloat(inputs[4].value)||0;
+  const rate = parseFloat(inputs[3].value)||0;
   const hours = days * 8;
-  inputs[3].value = hours;
+  inputs[2].value = hours;
   row.querySelector('.amt').textContent = '$' + (hours * rate).toFixed(2);
   infUpdateSummary();
 }
 
-function infAddInfibucksRow() {
-  infAddInfibucksRowEl({ role:'', count:0, hours:0, rate:5.85 });
-}
+function infAddInfibucksRow() { infAddInfibucksRowEl({ role:'', count:0, hours:0, rate:5.85 }); }
 
 function infGetInfibucks() {
   return Array.from(document.querySelectorAll('#inf-infibucks-body tr')).map(row => {
@@ -1785,7 +1702,6 @@ function infGetInfibucks() {
   }).filter(e => e.role.trim() || e.hours > 0);
 }
 
-// ── EXTRAS TABLE ──
 function infAddExtraRow(desc='', count=0, hours=0, rate=0) {
   const tbody = document.getElementById('inf-extras-body');
   const total = hours * rate;
@@ -1842,8 +1758,7 @@ function synInitRows() {
     { name:'Mr. Jeevan Prakash', hours:202.5, rate:35 },
     { name:'Mr. Deva Nair', hours:184, rate:20 },
   ];
-  synBuildTable();
-  synUpdateSummary();
+  synBuildTable(); synUpdateSummary();
 }
 
 function synBuildTable() {
@@ -1920,15 +1835,12 @@ function synRender() {
   const subtotal=data.reduce((s,e)=>s+e.total,0);
   const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const fmtDate=d=>{ if(!d||!d.includes('-')) return d; const[y,m,dd]=d.split('-'); return `${m}/${dd}/${y}`; };
-
   currentInvoice={ client:'Synaptic', invno, period, amount:subtotal, date:fmtDate(dateRaw) };
-
   const linesHTML=data.map(e=>`<tr>
     <td><div style="font-weight:600;">${e.name}</div><div style="font-size:11px;color:var(--muted);">Month of ${e.period}</div></td>
     <td class="mono r">${e.hours}</td>
     <td class="mono r">$${e.rate.toFixed(2)}</td>
     <td class="bold r" style="color:var(--c-synaptic);">$${fmt(e.total)}</td></tr>`).join('');
-
   document.getElementById('syn-paper').innerHTML=`
     <div class="inv-hdr">
       <div>
@@ -2074,9 +1986,7 @@ function icoRender() {
   const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   let invDateDisplay=dateRaw;
   if(dateRaw&&dateRaw.includes('-')){ const d=new Date(dateRaw+'T00:00:00'); invDateDisplay=d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }
-
   currentInvoice={ client:'ICON', invno, period, amount:subtotal, date:invDateDisplay };
-
   const linesHTML = data.map(r => '<tr>' +
     '<td style="font-weight:500;">' + r.name + '</td>' +
     '<td class="mono r">' + r.sow + '</td>' +
@@ -2084,7 +1994,6 @@ function icoRender() {
     '<td class="mono r">$' + r.rate.toFixed(2) + '</td>' +
     '<td class="bold r">$' + fmt(r.usd) + '</td></tr>'
   ).join('');
-
   document.getElementById('ico-paper').innerHTML=`
     <div class="inv-hdr">
       <div>
@@ -2197,7 +2106,6 @@ function recGenerate() {
   const invno = document.getElementById('rec-invno').value;
   const date = document.getElementById('rec-date').value || new Date().toISOString().split('T')[0];
   const period = document.getElementById('rec-period').value;
-
   let sub = 0;
   const lineItems = [];
   rows.forEach(r => {
@@ -2209,7 +2117,6 @@ function recGenerate() {
     lineItems.push({ desc, amt, rem });
   });
   const cgst = sub * 0.09, sgst = sub * 0.09, grand = sub + cgst + sgst;
-
   const lineRows = lineItems.map((li,i) => `
     <tr>
       <td class="mono">${i+1}</td>
@@ -2217,9 +2124,7 @@ function recGenerate() {
       <td class="mono r">${recFmtINR(li.amt)}</td>
       <td style="font-size:11px;color:var(--muted);">${li.rem}</td>
     </tr>`).join('');
-
   currentInvoice = { client:'Recepto', invno, period, amount: grand, date };
-
   document.getElementById('rec-paper').innerHTML = `
     <div class="inv-hdr">
       <div>
@@ -2288,7 +2193,6 @@ function recGenerate() {
       <div class="inv-note"><strong>Note:</strong> GST applicable as per intra-state supply. CGST 9% + SGST 9% = 18% total GST.</div>
     </div>
     <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
-
   document.getElementById('rec-preview').style.display = 'block';
   document.getElementById('rec-preview').scrollIntoView({ behavior:'smooth' });
   toast('✅ Rent invoice generated!');
@@ -2301,7 +2205,8 @@ function recReset() {
 }
 
 // ══════════════════════════════════════════
-// BENJ POLL — RENT
+// QUANTIVX PRIVATE LTD — RENT
+// (Previously: Benj Poll — internal IDs kept as "benj" for compatibility)
 // ══════════════════════════════════════════
 function benjAddRow(desc='', amt='') {
   const tbody = document.getElementById('benj-items-body');
@@ -2338,7 +2243,6 @@ function benjGenerate() {
   const invno = document.getElementById('benj-invno').value;
   const date = document.getElementById('benj-date').value || new Date().toISOString().split('T')[0];
   const period = document.getElementById('benj-period').value;
-
   let sub = 0;
   const lineItems = [];
   rows.forEach(r => {
@@ -2350,7 +2254,6 @@ function benjGenerate() {
     lineItems.push({ desc, amt, rem });
   });
   const cgst = sub * 0.09, sgst = sub * 0.09, grand = sub + cgst + sgst;
-
   const lineRows = lineItems.map((li,i) => `
     <tr>
       <td class="mono">${i+1}</td>
@@ -2358,8 +2261,7 @@ function benjGenerate() {
       <td class="mono r">${recFmtINR(li.amt)}</td>
       <td style="font-size:11px;color:var(--muted);">${li.rem}</td>
     </tr>`).join('');
-
-  currentInvoice = { client:'BenjPoll', invno, period, amount: grand, date };
+  currentInvoice = { client:'Quantivx', invno, period, amount: grand, date };
 
   document.getElementById('benj-paper').innerHTML = `
     <div class="inv-hdr">
@@ -2382,8 +2284,8 @@ function benjGenerate() {
       </div>
       <div>
         <div class="inv-addr-lbl">Bill To</div>
-        <div class="inv-addr-name">Benj Poll</div>
-        <div class="inv-addr-detail">Bengaluru, Karnataka, India</div>
+        <div class="inv-addr-name">Qunativx Private Ltd.</div>
+        <div class="inv-addr-detail">M06, Harsha Greenwoods, 5th Main Road, Malleshpalya,<br>Bengaluru, Karnataka 560075<br>GSTIN: 29AABCQ2492E1ZD<br>Ph: +91 9449430000<br>benz.paul@quantivx.org</div>
       </div>
     </div>
     <div class="inv-body">
@@ -2441,7 +2343,9 @@ function benjReset() {
   toast('↺ Reset');
 }
 
-
+// ══════════════════════════════════════════
+// PDF EXPORT
+// ══════════════════════════════════════════
 function downloadPDFById(paperId) {
   const el = document.getElementById(paperId);
   if (!el || !el.innerHTML.trim()) { toast('⚠️ Generate an invoice first'); return; }
@@ -2475,10 +2379,8 @@ function downloadPDF() {
 }
 
 function _openPrintOverlay(invoiceHTML) {
-  // Use same-page iframe approach — no pop-up needed
   const existing = document.getElementById('printFrame');
   if (existing) existing.remove();
-
   const styles = `
     *{box-sizing:border-box;margin:0;padding:0;}
     :root{--ink:#1a3fa3;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
@@ -2519,28 +2421,22 @@ function _openPrintOverlay(invoiceHTML) {
     .inv-signatory{border:1px solid #e0dbd2;border-radius:4px;padding:18px 20px;}
     .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#eef3fc!important;border-left:3px solid #1a3fa3;font-size:11px;color:#1a3fa3;}
     .inv-footer-bar{background:#1a3fa3!important;color:#b0c4f8;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
-    [style*="background:var(--c-icon)"],[style*="background:#1a3fa3"]{background:#1a3fa3!important;}
-    [style*="background:#f5f0fb"]{background:#eef3fc!important;}
-    [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#1a3fa3!important;}
+    #iframeToolbar{background:#1a3fa3;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;position:sticky;top:0;z-index:10;}
+    #iframeTip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#1a3fa3;font-family:'DM Sans',sans-serif;}
+    @media print{@page{margin:0;size:A4 portrait;}#iframeToolbar,#iframeTip{display:none!important;}html,body{height:100%;}
+      .invoice-wrap{min-height:100vh;}.invoice-wrap .invoice-paper{min-height:100vh;}}
   `;
-
   const iframe = document.createElement('iframe');
   iframe.id = 'printFrame';
   iframe.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:none;z-index:99999;background:white;';
   document.body.appendChild(iframe);
-
   const doc = iframe.contentDocument;
   doc.open();
   doc.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap">
-    <style>${styles}
-      #iframeToolbar{background:#1a3fa3;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;position:sticky;top:0;z-index:10;}
-      #iframeTip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#1a3fa3;font-family:'DM Sans',sans-serif;}
-      @media print{@page{margin:0;size:A4 portrait;}#iframeToolbar,#iframeTip{display:none!important;}html,body{height:100%;}
-        .invoice-wrap{min-height:100vh;}.invoice-wrap .invoice-paper{min-height:100vh;}}
-    </style>
+    <style>${styles}</style>
   </head><body>
-    <div id="iframeToolbar" style="background:#1a3fa3;">
+    <div id="iframeToolbar">
       <span style="font-weight:600;">📄 Invoice — Ready to Print</span>
       <button onclick="parent.document.getElementById('printFrame').contentWindow.print()" style="background:#1a4dc8;color:white;border:none;border-radius:4px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;margin-left:auto;">🖨️ Print / Save as PDF</button>
       <button onclick="document.getElementById('printFrame').remove()" style="background:transparent;color:#aaa;border:1px solid #444;border-radius:4px;padding:8px 14px;font-size:13px;cursor:pointer;">✕ Close</button>
@@ -2551,96 +2447,6 @@ function _openPrintOverlay(invoiceHTML) {
   doc.close();
   toast('✅ Invoice ready — click 🖨️ Print / Save as PDF');
 }
-
-// ── DEAD CODE BELOW — kept for reference only ──
-function _openPrintOverlay_popup(invoiceHTML) {
-  const pw = window.open('', '_blank', 'width=900,height=700');
-  if (!pw) { toast('⚠️ Allow pop-ups for this page to export PDF'); return; }
-
-  pw.document.write(`<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Invoice ${currentInvoice?.invno||''}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  :root{--ink:#1a3fa3;--paper:#f7f4ef;--rule:#e0dbd2;--muted:#8a8580;
-        --c-infinitus:#1a3fa3;--c-synaptic:#1a3fa3;--c-icon:#1a3fa3;--accent:#1a4dc8;}
-  html,body{height:100%;font-family:'DM Sans',sans-serif;background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-
-  /* toolbar */
-  #toolbar{background:#1a3fa3;color:white;padding:12px 24px;display:flex;align-items:center;gap:14px;font-family:'DM Sans',sans-serif;font-size:13px;}
-  #toolbar button{padding:8px 20px;border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;}
-  #toolbar .btn-print{background:#1a4dc8;color:white;margin-left:auto;}
-  #toolbar .btn-close{background:transparent;color:#aaa;border:1px solid #444!important;}
-  #tip{background:#fff8e7;border-bottom:1px solid #f0c040;padding:10px 24px;font-size:12px;color:#1a3fa3;font-family:'DM Sans',sans-serif;}
-
-  /* invoice */
-  .invoice-wrap{width:100%;max-width:860px;margin:0 auto;display:flex;flex-direction:column;min-height:100vh;}
-  .invoice-wrap .invoice-paper{display:flex;flex-direction:column;flex:1;}
-  .invoice-wrap .invoice-paper .inv-body{flex:1;}
-  .inv-hdr{background:#1a3fa3!important;color:white;padding:44px 40px 36px;display:flex;justify-content:space-between;align-items:flex-start;}
-  .inv-hdr-company{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:6px;color:white;}
-  .inv-hdr-detail{font-size:11px;color:#aaa;line-height:1.7;font-family:'DM Mono',monospace;}
-  .inv-hdr-meta{text-align:right;}
-  .inv-hdr-num{font-family:'DM Serif Display',serif;font-size:30px;}
-  .inv-hdr-lbl{font-size:10px;color:#888;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:3px;}
-  .inv-hdr-val{font-size:13px;color:#ddd;}
-  .inv-addr-bar{padding:20px 40px;display:grid;grid-template-columns:1fr 1fr;gap:24px;border-bottom:1px solid var(--rule);}
-  .inv-addr-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
-  .inv-addr-name{font-weight:600;font-size:14px;}
-  .inv-addr-detail{font-size:12px;color:var(--muted);line-height:1.6;}
-  .inv-service-tag{font-style:italic;color:var(--muted);font-size:13px;border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:18px;}
-  .inv-body{padding:36px 40px 48px;}
-  table.inv-tbl{width:100%;border-collapse:collapse;margin-bottom:24px;font-size:13px;}
-  table.inv-tbl th{background:#e8eef8!important;padding:9px 14px;text-align:left;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--muted);}
-  table.inv-tbl th.r, table.inv-tbl td.r{text-align:right;}
-  table.inv-tbl td{padding:11px 14px;border-bottom:1px solid #f0ece5;}
-  table.inv-tbl tr:last-child td{border-bottom:none;}
-  table.inv-tbl td.mono{font-family:'DM Mono',monospace;}
-  table.inv-tbl td.bold{font-weight:700;font-family:'DM Mono',monospace;}
-  .inv-totals{margin-left:auto;width:280px;margin-bottom:24px;}
-  .inv-total-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--rule);font-size:13px;}
-  .inv-total-row.grand{font-family:'DM Serif Display',serif;font-size:20px;border-bottom:none;padding-top:12px;}
-  .inv-bank-grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
-  .inv-bank{background:#f0f5ff!important;border-radius:4px;padding:18px 20px;}
-  .inv-bank-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
-  .inv-bank-row{display:flex;gap:8px;margin-bottom:4px;font-size:11px;}
-  .inv-bank-row .k{color:var(--muted);min-width:110px;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;}
-  .inv-bank-row .v{font-weight:500;}
-  .inv-signatory{border:1px solid var(--rule);border-radius:4px;padding:18px 20px;}
-  .inv-note{margin-top:16px;margin-bottom:48px;padding:12px 16px;background:#fff8e7!important;border-left:3px solid #f0c040;font-size:11px;color:#1a3fa3;}
-  .inv-footer-bar{background:#1a3fa3!important;color:#b0c4f8;padding:12px 40px;font-size:10px;font-family:'DM Mono',monospace;display:flex;justify-content:space-between;margin-top:auto;}
-
-  /* ICO-specific colours */
-  [style*="background:var(--c-icon)"],[style*="background:#1a3fa3"]{background:#1a3fa3!important;}
-  [style*="background:#f5f0fb"]{background:#eef3fc!important;}
-  [style*="background:var(--ink)"],[style*="background:#0f0e0c"]{background:#1a3fa3!important;}
-
-  @media print {
-    @page{margin:0;size:A4 portrait;}
-    #toolbar,#tip{display:none!important;}
-    html,body{height:100%;margin:0;padding:0;}
-    .invoice-wrap{max-width:100%;width:100%;margin:0;padding:0;min-height:100vh;}
-    .invoice-wrap .invoice-paper{min-height:100vh;}
-  }
-</style>
-</head>
-<body>
-<div id="toolbar">
-  <span style="font-weight:600;">📄 Invoice ${currentInvoice?.invno||''} — Ready to Print</span>
-  <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
-  <button class="btn-close" onclick="window.close()">✕ Close</button>
-</div>
-<div id="tip">💡 In print dialog: <strong>Margins → None</strong> · <strong>Background graphics ✓</strong> · Destination → <strong>Save as PDF</strong></div>
-<div class="invoice-wrap">${invoiceHTML}</div>
-</div>
-</body>
-</html>`);
-  pw.document.close();
-  toast('✅ Print window opened!');
-} // end _openPrintOverlay_popup
 
 // ══════════════════════════════════════════
 // TOAST
