@@ -847,9 +847,9 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 
     <div class="section-hdr">Invoice Setup</div>
     <div class="config-strip show" id="recepto-config">
-      <div class="form-field"><label>Invoice #</label><input type="text" id="rec-invno" value="XTMX/RENT/001"/></div>
+      <div class="form-field"><label>Invoice #</label><input type="text" id="rec-invno" value="XTM/1118"/></div>
       <div class="form-field"><label>Date</label><input type="date" id="rec-date"/></div>
-      <div class="form-field"><label>Billing Period</label><input type="text" id="rec-period" value="June 2026"/></div>
+
     </div>
 
     <div class="section-hdr">Rent Line Items</div>
@@ -896,9 +896,9 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
 
     <div class="section-hdr">Invoice Setup</div>
     <div class="config-strip show" id="benj-config">
-      <div class="form-field"><label>Invoice #</label><input type="text" id="benj-invno" value="XTMX/RENT/002"/></div>
+      <div class="form-field"><label>Invoice #</label><input type="text" id="benj-invno" value="XTM/1120"/></div>
       <div class="form-field"><label>Date</label><input type="date" id="benj-date"/></div>
-      <div class="form-field"><label>Billing Period</label><input type="text" id="benj-period" value="June 2026"/></div>
+
     </div>
 
     <div class="section-hdr">Rent Line Items</div>
@@ -2104,8 +2104,9 @@ function recGenerate() {
   const rows = document.getElementById('rec-items-body').querySelectorAll('tr');
   if (!rows.length) { toast('⚠️ Add at least one line item'); return; }
   const invno = document.getElementById('rec-invno').value;
-  const date = document.getElementById('rec-date').value || new Date().toISOString().split('T')[0];
-  const period = document.getElementById('rec-period').value;
+  const dateRaw = document.getElementById('rec-date').value || new Date().toISOString().split('T')[0];
+  const date = (function(d){ const [y,m,dd]=d.split('-'); const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${dd} ${mon[+m-1]} ${y}`; })(dateRaw);
+  const period = '';
   let sub = 0;
   const lineItems = [];
   rows.forEach(r => {
@@ -2132,10 +2133,9 @@ function recGenerate() {
         <div class="inv-hdr-detail">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
       </div>
       <div class="inv-hdr-meta">
-        <div class="inv-hdr-lbl">Tax Invoice</div>
+        <div class="inv-hdr-lbl">Invoice No</div>
         <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
         <div class="inv-hdr-val">Date: ${date}</div>
-        <div class="inv-hdr-val">Period: ${period}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -2151,7 +2151,7 @@ function recGenerate() {
       </div>
     </div>
     <div class="inv-body">
-      <div class="inv-service-tag">Rent Invoice — ${period}</div>
+      <div class="inv-service-tag">Rent Invoice</div>
       <table class="inv-tbl">
         <thead><tr><th>#</th><th>Description</th><th class="r">Amount</th><th>Remarks</th></tr></thead>
         <tbody>
@@ -2190,7 +2190,7 @@ function recGenerate() {
         <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">ICICINBB</span></div>
         <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
       </div>
-      <div class="inv-note"><strong>Note:</strong> GST applicable as per intra-state supply. CGST 9% + SGST 9% = 18% total GST.</div>
+
     </div>
     <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
   document.getElementById('rec-preview').style.display = 'block';
@@ -2241,8 +2241,9 @@ function benjGenerate() {
   const rows = document.getElementById('benj-items-body').querySelectorAll('tr');
   if (!rows.length) { toast('⚠️ Add at least one line item'); return; }
   const invno = document.getElementById('benj-invno').value;
-  const date = document.getElementById('benj-date').value || new Date().toISOString().split('T')[0];
-  const period = document.getElementById('benj-period').value;
+  const dateRaw = document.getElementById('benj-date').value || new Date().toISOString().split('T')[0];
+  const date = (function(d){ const [y,m,dd]=d.split('-'); const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${dd} ${mon[+m-1]} ${y}`; })(dateRaw);
+  const period = '';
   let sub = 0;
   const lineItems = [];
   rows.forEach(r => {
@@ -2270,10 +2271,9 @@ function benjGenerate() {
         <div class="inv-hdr-detail">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
       </div>
       <div class="inv-hdr-meta">
-        <div class="inv-hdr-lbl">Tax Invoice</div>
+        <div class="inv-hdr-lbl">Invoice No</div>
         <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
         <div class="inv-hdr-val">Date: ${date}</div>
-        <div class="inv-hdr-val">Period: ${period}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -2289,7 +2289,7 @@ function benjGenerate() {
       </div>
     </div>
     <div class="inv-body">
-      <div class="inv-service-tag">Rent Invoice — ${period}</div>
+      <div class="inv-service-tag">Rent Invoice</div>
       <table class="inv-tbl">
         <thead><tr><th>#</th><th>Description</th><th class="r">Amount</th><th>Remarks</th></tr></thead>
         <tbody>
@@ -2328,7 +2328,7 @@ function benjGenerate() {
         <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">ICICINBB</span></div>
         <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
       </div>
-      <div class="inv-note"><strong>Note:</strong> GST applicable as per intra-state supply. CGST 9% + SGST 9% = 18% total GST.</div>
+
     </div>
     <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 
