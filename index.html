@@ -394,9 +394,9 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
     <div class="nav-item" onclick="showView('recepto', this)">
       <span class="dot" style="background:white;opacity:0.7;"></span> Quick Response Tech
     </div>
-    <!-- CHANGED: Benj Poll → Quantivx Pvt Ltd -->
+    <!-- CHANGED: Benj Poll → Quantivx Private Limited -->
     <div class="nav-item" onclick="showView('benjpoll', this)">
-      <span class="dot" style="background:white;opacity:0.7;"></span> Quantivx Pvt Ltd
+      <span class="dot" style="background:white;opacity:0.7;"></span> Quantivx Private Limited
     </div>
   </div>
 
@@ -622,7 +622,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="inf-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="ie_note" oninput="infRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
+            
           </div>
         </div>
         <div class="edit-apply-row">
@@ -720,7 +720,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="syn-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="se_note" oninput="synRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
+            
           </div>
         </div>
         <div class="edit-apply-row"><button class="btn btn-primary btn-sm" onclick="synRender()">↻ Refresh</button><span class="edit-hint">Updates live</span></div>
@@ -828,7 +828,7 @@ table.inv-tbl td.bold { font-weight: 700; font-family: 'DM Mono', monospace; }
         </div>
         <div class="edit-pane" id="ico-tab-notes">
           <div class="form-row">
-            <div class="form-field"><label>Note</label><textarea id="ie2_note" oninput="icoRender()">Export against LUT without payment of GST | IEC & LUT No: AD290425003857U</textarea></div>
+            
           </div>
         </div>
         <div class="edit-apply-row"><button class="btn btn-primary btn-sm" onclick="icoRender()">↻ Refresh</button><span class="edit-hint">Updates live</span></div>
@@ -1051,8 +1051,8 @@ function showView(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('view-' + id).classList.add('active');
   if (el) el.classList.add('active');
-  // CHANGED: benjpoll title updated to Quantivx Pvt Ltd
-  const titles = { dashboard:'Dashboard', infinitus:'Infinitus Systems', synaptic:'Synaptic Advisory', icon:'ICON Agility', recepto:'Quick Response Technologies', benjpoll:'Quantivx Pvt Ltd', history:'Invoice History' };
+  // CHANGED: benjpoll title updated to Quantivx Private Limited
+  const titles = { dashboard:'Dashboard', infinitus:'Infinitus Systems', synaptic:'Synaptic Advisory', icon:'ICON Agility', recepto:'Quick Response Technologies', benjpoll:'Quantivx Private Limited', history:'Invoice History' };
   const subs = { dashboard:'Revenue Overview', infinitus:'Flex Team Billing', synaptic:'Individual Employee Billing', icon:'SOW Consulting · USD', recepto:'Rent Invoice · INR', benjpoll:'Rent Invoice · INR', history:'All Saved Invoices' };
   document.getElementById('topbarTitle').innerHTML = `${titles[id]} <span>${subs[id]}</span>`;
   if (id === 'dashboard') updateDashboard();
@@ -1498,7 +1498,6 @@ function infRender() {
   const ifsc = document.getElementById('ie_ifsc').value;
   const swift = document.getElementById('ie_swift').value;
   const branch = document.getElementById('ie_branch').value;
-  const note = document.getElementById('ie_note').value;
   const lines = infGetLines();
   const subtotal = lines.reduce((s,l)=>s+l.total,0);
   const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1519,16 +1518,16 @@ function infRender() {
     <td class="bold r">$${fmt(l.total)}</td></tr>`).join('');
 
   document.getElementById('inf-paper').innerHTML = `
-    <div class="inv-hdr">
+    <div class="inv-hdr" style="background:#ffffff; color:#000000 !important;">
       <div>
         <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${gst} | Ph: ${phone} | ${email}</div>
+        <div class="inv-hdr-detail" style="color:#000000;">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${gst} | Ph: ${phone} | ${email}</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
-        <div class="inv-hdr-num" style="color:#7eb3ff;">#${invno}</div>
-        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${fmtDate(dateRaw)}</div>
-        <div class="inv-hdr-lbl" style="margin-top:6px;">Period</div><div class="inv-hdr-val">${period}</div>
+        <div class="inv-hdr-num" style="color:#000000;">#${invno}</div>
+        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val" style="color:#000000;">${fmtDate(dateRaw)}</div>
+        <div class="inv-hdr-lbl" style="margin-top:6px;">Period</div><div class="inv-hdr-val" style="color:#000000;">${period}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -1565,7 +1564,7 @@ function infRender() {
         <div class="inv-total-row grand"><span>Balance Due</span><span style="font-family:'DM Mono',monospace;color:#1a3fa3;">$${fmt(grandTotal)}</span></div>
       </div>
     </div>
-    <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>${email}</span></div>`;
+    <div class="inv-footer-bar" style="background:#ffffff; color:#000000 !important;"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>${email}</span></div>`;
 }
 
 // ══════════════════════════════════════════
@@ -1830,7 +1829,6 @@ function synRender() {
   const acct=document.getElementById('se_acct').value;
   const ifsc=document.getElementById('se_ifsc').value;
   const swift=document.getElementById('se_swift').value;
-  const note=document.getElementById('se_note').value;
   const data=synGetData();
   const subtotal=data.reduce((s,e)=>s+e.total,0);
   const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1842,15 +1840,15 @@ function synRender() {
     <td class="mono r">$${e.rate.toFixed(2)}</td>
     <td class="bold r" style="color:var(--c-synaptic);">$${fmt(e.total)}</td></tr>`).join('');
   document.getElementById('syn-paper').innerHTML=`
-    <div class="inv-hdr">
+    <div class="inv-hdr" style="background:#ffffff; color:#000000 !important;">
       <div>
         <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${document.getElementById('se_gst').value}</div>
+        <div class="inv-hdr-detail" style="color:#000000;">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GST: ${document.getElementById('se_gst').value}</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice</div>
-        <div class="inv-hdr-num" style="color:#7eb3ff;">#${invno}</div>
-        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${fmtDate(dateRaw)}</div>
+        <div class="inv-hdr-num" style="color:#000000;">#${invno}</div>
+        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val" style="color:#000000;">${fmtDate(dateRaw)}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -1878,9 +1876,8 @@ function synRender() {
         <div class="inv-bank-row"><span class="k">SWIFT</span><span class="v">${swift}</span></div>
         <div class="inv-bank-row"><span class="k">Branch</span><span class="v">Hebbal, Bangalore 560024</span></div>
       </div>
-      <div class="inv-note"><strong>Note:</strong> ${note}</div>
     </div>
-    <div class="inv-footer-bar"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar" style="background:#ffffff; color:#000000 !important;"><span>${company}</span><span>Invoice #${invno} · ${period}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 }
 
 function synReset() {
@@ -1980,7 +1977,6 @@ function icoRender() {
   const pan=document.getElementById('ie2_pan').value;
   const signame=document.getElementById('ie2_signame').value;
   const sigrole=document.getElementById('ie2_sigrole').value;
-  const note=document.getElementById('ie2_note').value;
   const data=icoGetData();
   const subtotal=data.reduce((s,r)=>s+r.usd,0);
   const fmt=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1995,20 +1991,20 @@ function icoRender() {
     '<td class="bold r">$' + fmt(r.usd) + '</td></tr>'
   ).join('');
   document.getElementById('ico-paper').innerHTML=`
-    <div class="inv-hdr">
+    <div class="inv-hdr" style="background:#ffffff; color:#000000 !important; padding:16px 28px;">
       <div>
-        <div class="inv-hdr-company">${company}</div>
-        <div class="inv-hdr-detail">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GSTIN: ${gstin} | CIN: ${cin} | PH: ${phone}<br>${email}</div>
+        <div class="inv-hdr-company" style="font-size:14px;">${company}</div>
+        <div class="inv-hdr-detail" style="color:#000000; font-size:9px; line-height:1.5;">Sy No 45/5(p) and 46/1B, Byatarayanapura, Bangalore North, Karnataka, India, 560092<br>GSTIN: ${gstin} | CIN: ${cin} | PH: ${phone}<br>${email}</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Tax Invoice</div>
-        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
-        <div class="inv-hdr-lbl" style="margin-top:8px;">Date</div><div class="inv-hdr-val">${invDateDisplay}</div>
-        <div class="inv-hdr-lbl" style="margin-top:6px;">Period</div><div class="inv-hdr-val">${period}</div>
-        <div class="inv-hdr-lbl" style="margin-top:6px;">Reference</div><div class="inv-hdr-val">${ref}</div>
+        <div class="inv-hdr-num" style="color:#000000;">${invno}</div>
+        <div class="inv-hdr-lbl" style="margin-top:4px;">Date</div><div class="inv-hdr-val" style="color:#000000;">${invDateDisplay}</div>
+        <div class="inv-hdr-lbl" style="margin-top:3px;">Period</div><div class="inv-hdr-val" style="color:#000000;">${period}</div>
+        <div class="inv-hdr-lbl" style="margin-top:3px;">Reference</div><div class="inv-hdr-val" style="color:#000000;">${ref}</div>
       </div>
     </div>
-    <div class="inv-addr-bar">
+    <div class="inv-addr-bar" style="padding:10px 28px; gap:20px;">
       <div>
         <div class="inv-addr-lbl">From</div>
         <div class="inv-addr-name">${company}</div>
@@ -2020,20 +2016,20 @@ function icoRender() {
         <div class="inv-addr-detail">${clientaddr.replace(/\n/g,'<br>')}<br>Ph: ${clientphone} | ${clientemail}</div>
       </div>
     </div>
-    <div class="inv-body">
-      <div class="inv-service-tag">${ref} · ${period} · Issued under GST invoicing provisions</div>
+    <div class="inv-body" style="padding:12px 28px;">
+      <div class="inv-service-tag" style="margin-bottom:8px; padding-bottom:5px; font-size:10px;">${ref} · ${period} · Issued under GST invoicing provisions</div>
       <table class="inv-tbl">
         <thead><tr><th>Consultant</th><th class="r">SOW</th><th class="r">Hours</th><th class="r">Rate</th><th class="r">Amount (USD)</th></tr></thead>
         <tbody>${linesHTML}</tbody>
         <tfoot>
-          <tr style="background:#f0f4f9;"><td colspan="4" style="padding:9px 14px;font-weight:600;text-align:right;">Sub Total</td><td class="mono r" style="padding:9px 14px;font-weight:600;">$${fmt(subtotal)}</td></tr>
+          <tr style="background:#f0f4f9;"><td colspan="4" style="padding:6px 14px;font-weight:600;text-align:right;font-size:12px;">Sub Total</td><td class="mono r" style="padding:6px 14px;font-weight:600;font-size:12px;">$${fmt(subtotal)}</td></tr>
           <tr><td colspan="4" style="padding:7px 14px;color:var(--muted);font-size:12px;text-align:right;">GST @ 0% (LUT Export)</td><td class="mono r" style="padding:7px 14px;color:var(--muted);font-size:12px;">–</td></tr>
-          <tr style="background:#1a3fa3;"><td colspan="4" style="padding:11px 14px;color:white;font-family:'DM Serif Display',serif;font-size:15px;">Total USD</td><td style="padding:11px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:17px;color:white;font-weight:700;">$${fmt(subtotal)}</td></tr>
+          <tr style="background:#f0f4f9;"><td colspan="4" style="padding:7px 14px;color:#000000;font-family:'DM Serif Display',serif;font-size:13px;">Total USD</td><td style="padding:7px 14px;text-align:right;font-family:'DM Mono',monospace;font-size:14px;color:#000000;font-weight:700;">$${fmt(subtotal)}</td></tr>
         </tfoot>
       </table>
-      <div class="inv-bank-grid-2col">
-        <div class="inv-bank">
-          <div class="inv-bank-title">Bank Details</div>
+      <div class="inv-bank-grid-2col" style="margin-top:10px; gap:10px;">
+        <div class="inv-bank" style="padding:10px 12px;">
+          <div class="inv-bank-title" style="font-size:10px; margin-bottom:6px;">Bank Details</div>
           <div class="inv-bank-row"><span class="k">Beneficiary</span><span class="v">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</span></div>
           <div class="inv-bank-row"><span class="k">Bank</span><span class="v">ICICI Bank Ltd</span></div>
           <div class="inv-bank-row"><span class="k">Account No</span><span class="v">318005000874</span></div>
@@ -2045,7 +2041,7 @@ function icoRender() {
           <div class="inv-bank-row"><span class="k">PAN</span><span class="v">${pan}</span></div>
           <div class="inv-bank-row"><span class="k">GST No.</span><span class="v">${gstin}</span></div>
         </div>
-        <div class="inv-signatory" style="border:1px solid var(--rule);border-radius:4px;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div class="inv-signatory" style="border:1px solid var(--rule);border-radius:4px;padding:10px 14px;display:flex;flex-direction:column;justify-content:space-between;">
           <div>
             <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">For, ${company}</div>
             <div style="height:40px;border-bottom:1px solid var(--rule);margin-bottom:10px;"></div>
@@ -2055,9 +2051,8 @@ function icoRender() {
           <div style="font-size:10px;color:var(--muted);font-style:italic;margin-top:12px;">🔏 Digitally authorised document</div>
         </div>
       </div>
-      <div class="inv-note"><strong>Note:</strong> ${note}</div>
     </div>
-    <div class="inv-footer-bar"><span>${company}</span><span>${invno} · ${period}</span><span>${email}</span></div>`;
+    <div class="inv-footer-bar" style="background:#ffffff; color:#000000 !important;"><span>${company}</span><span>${invno} · ${period}</span><span>${email}</span></div>`;
 }
 
 function icoReset() {
@@ -2127,15 +2122,15 @@ function recGenerate() {
     </tr>`).join('');
   currentInvoice = { client:'Recepto', invno, period, amount: grand, date };
   document.getElementById('rec-paper').innerHTML = `
-    <div class="inv-hdr">
+    <div class="inv-hdr" style="background:#ffffff; color:#000000 !important;">
       <div>
         <div class="inv-hdr-company">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</div>
-        <div class="inv-hdr-detail">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
+        <div class="inv-hdr-detail" style="color:#000000;">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice No</div>
-        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
-        <div class="inv-hdr-val">Date: ${date}</div>
+        <div class="inv-hdr-num" style="color:#000000;">${invno}</div>
+        <div class="inv-hdr-val" style="color:#000000;">Date: ${date}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -2172,10 +2167,10 @@ function recGenerate() {
             <td class="mono r">${recFmtINR(sgst)}</td>
             <td style="font-size:11px;color:var(--muted);">State GST</td>
           </tr>
-          <tr style="background:#1a3fa3;">
-            <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:white;padding:12px 14px;">Grand Total</td>
-            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;background:#1a3fa3;">${recFmtINR(grand)}</td>
-            <td style="background:#1a3fa3;"></td>
+          <tr>
+            <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:#000000;padding:12px 14px;">Grand Total</td>
+            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#000000;text-align:right;padding:12px 14px;">${recFmtINR(grand)}</td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -2192,7 +2187,7 @@ function recGenerate() {
       </div>
 
     </div>
-    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar" style="background:#ffffff; color:#000000 !important;"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
   document.getElementById('rec-preview').style.display = 'block';
   document.getElementById('rec-preview').scrollIntoView({ behavior:'smooth' });
   toast('✅ Rent invoice generated!');
@@ -2265,15 +2260,15 @@ function benjGenerate() {
   currentInvoice = { client:'Quantivx', invno, period, amount: grand, date };
 
   document.getElementById('benj-paper').innerHTML = `
-    <div class="inv-hdr">
+    <div class="inv-hdr" style="background:#ffffff; color:#000000 !important;">
       <div>
         <div class="inv-hdr-company">XTRANSMATRIX CONSULTING SERVICES PRIVATE LIMITED</div>
-        <div class="inv-hdr-detail">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
+        <div class="inv-hdr-detail" style="color:#000000;">GSTIN: 29AAACX3107G1ZH<br>Bengaluru, Karnataka, India</div>
       </div>
       <div class="inv-hdr-meta">
         <div class="inv-hdr-lbl">Invoice No</div>
-        <div class="inv-hdr-num" style="color:#7eb3ff;">${invno}</div>
-        <div class="inv-hdr-val">Date: ${date}</div>
+        <div class="inv-hdr-num" style="color:#000000;">${invno}</div>
+        <div class="inv-hdr-val" style="color:#000000;">Date: ${date}</div>
       </div>
     </div>
     <div class="inv-addr-bar">
@@ -2310,10 +2305,10 @@ function benjGenerate() {
             <td class="mono r">${recFmtINR(sgst)}</td>
             <td style="font-size:11px;color:var(--muted);">State GST</td>
           </tr>
-          <tr style="background:#1a3fa3;">
-            <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:white;padding:12px 14px;">Grand Total</td>
-            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#fff;text-align:right;padding:12px 14px;background:#1a3fa3;">${recFmtINR(grand)}</td>
-            <td style="background:#1a3fa3;"></td>
+          <tr>
+            <td colspan="2" style="text-align:right;font-family:'DM Serif Display',serif;font-size:14px;color:#000000;padding:12px 14px;">Grand Total</td>
+            <td style="font-family:'DM Serif Display',serif;font-size:18px;color:#000000;text-align:right;padding:12px 14px;">${recFmtINR(grand)}</td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -2330,7 +2325,7 @@ function benjGenerate() {
       </div>
 
     </div>
-    <div class="inv-footer-bar"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
+    <div class="inv-footer-bar" style="background:#ffffff; color:#000000 !important;"><span>XTRANSMATRIX CONSULTING SERVICES PVT LTD</span><span>${invno}</span><span>prasanna.patel@xtransmatrix.com | account@xtransmatrix.com</span></div>`;
 
   document.getElementById('benj-preview').style.display = 'block';
   document.getElementById('benj-preview').scrollIntoView({ behavior:'smooth' });
